@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Archilog_Geom
 {
-    public interface ObservableGraphics : Graphics
+    public interface IObservableGraphics : IGraphics
     {
 
     }
