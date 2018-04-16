@@ -11,10 +11,11 @@ namespace Archilog_Geom
         [STAThread]
         static void Main()
         {
-            //récupérer le form a partir de la Graphics et la créer comme ça
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new CsGraphics());
+
+            Graphics g = new CsGraphics();
+            Application.Run((Form) g);
         }
     }
 }
