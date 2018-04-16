@@ -8,15 +8,16 @@ namespace Archilog_Geom
 {
     class Mediator : IMediator
     {
+        private List<IShape> _drawnShapes;
+
         [STAThread]
         static void Main()
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            Graphics g = new CsGraphics();
+            IGraphics g = new CsGraphics();
             Application.Run((Form) g);
-            string s;
         }
     }
 }

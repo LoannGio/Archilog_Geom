@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Archilog_Geom
 {
-    interface IShape
+    public interface IShape
     {
     }
 }

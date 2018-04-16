@@ -5,8 +5,8 @@ using System.Text;
 
 namespace Archilog_Geom
 {
-    public interface Graphics
+    public interface IGraphics
     {
-
+        void UpdateToolbarOnView(List<IShape> toolBarShapes);
     }
 }

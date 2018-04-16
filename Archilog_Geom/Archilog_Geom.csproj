@@ -46,6 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Model\ARightClickPopUp.cs" />
+    <Compile Include="Model\IShape.cs" />
     <Compile Include="View\AWindowsObserver.cs" />
     <Compile Include="Controller\CareTaker.cs" />
     <Compile Include="Model\Circle.cs" />
@@ -67,7 +68,6 @@
     <Compile Include="Model\PopUpRectangle.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Model\Rectangle.cs" />
-    <Compile Include="Model\Shape.cs" />
     <Compile Include="Model\SingleShape.cs" />
     <Compile Include="Model\ToolBar.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -79,6 +79,9 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="View\CsGraphics.resx">
+      <DependentUpon>CsGraphics.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

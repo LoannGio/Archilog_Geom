@@ -7,3 +7,4 @@ C:\Users\Loann\Documents\Visual Studio 2017\Projects\Archilog_Geom\Archilog_Geom
 C:\Users\Loann\Documents\Visual Studio 2017\Projects\Archilog_Geom\Archilog_Geom\obj\Debug\Archilog_Geom.csproj.CoreCompileInputs.cache
 C:\Users\Loann\Documents\Visual Studio 2017\Projects\Archilog_Geom\Archilog_Geom\obj\Debug\Archilog_Geom.exe
 C:\Users\Loann\Documents\Visual Studio 2017\Projects\Archilog_Geom\Archilog_Geom\obj\Debug\Archilog_Geom.pdb
+C:\Users\Loann\Documents\Visual Studio 2017\Projects\Archilog_Geom\Archilog_Geom\obj\Debug\Archilog_Geom.CsGraphics.resources
