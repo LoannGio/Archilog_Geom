@@ -8,6 +8,6 @@ namespace Archilog_Geom
 {
     class ToolBar
     {
-        private List<IShape> _toolBarShapes { get; set; }
+        private List<IShape> ToolBarShapes { get; set; }
     }
 }
