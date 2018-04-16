@@ -16,6 +16,7 @@ namespace Archilog_Geom
 
             Graphics g = new CsGraphics();
             Application.Run((Form) g);
+            string s;
         }
     }
 }
