@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Archilog_Geom
 {
-    class GroupShapes : IShape
+    interface IShape
     {
     }
 }
