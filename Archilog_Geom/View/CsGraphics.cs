@@ -15,7 +15,12 @@ namespace Archilog_Geom
         public CsGraphics()
         {
           InitializeComponent();
-            test();
+            InitializeToolBar();
+        }
+
+        public void InitializeToolBar()
+        {
+            toolBarPanel.Invalidate();
         }
 
         private void InitializeComponent()
@@ -56,19 +61,15 @@ namespace Archilog_Geom
 
         }
 
-        private void test()
-        {
-            
-        }
-
-        public void UpdateToolbarOnView(List<IShape> toolBarShapes)
-        {
- 
-        }
-
         private void toolBarPanel_CellPaint(object sender, TableLayoutCellPaintEventArgs e)
         {
+            List<IShape> toolbar = Mediator.Instance.ToolBar.ToolBarShapes;
+            toolBarPanel.RowCount = toolbar.Count;
+            for (int i = 0; i < toolbar.Count; i++)
+            {
+                var cell = toolBarPanel.GetControlFromPosition(0, i);
 
+            }
         }
     }
 }
