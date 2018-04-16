@@ -7,5 +7,6 @@ namespace Archilog_Geom
 {
     public interface IGraphics
     {
+        void InitializeToolBar();
     }
 }
