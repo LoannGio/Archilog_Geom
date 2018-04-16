@@ -86,6 +86,8 @@ namespace Archilog_Geom
             this._drawingPanel.Name = "_drawingPanel";
             this._drawingPanel.Size = new System.Drawing.Size(671, 459);
             this._drawingPanel.TabIndex = 0;
+            this._drawingPanel.Paint += new System.Windows.Forms.PaintEventHandler(this._drawingPanel_Paint);
+            this._drawingPanel.MouseDown += new System.Windows.Forms.MouseEventHandler(this._drawingPanel_MouseDown);
             // 
             // _toolBarPanel
             // 
@@ -108,5 +110,29 @@ namespace Archilog_Geom
 
         }
 
+        private void _drawingPanel_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == System.Windows.Forms.MouseButtons.Left)
+            {
+                Rectangle rect = new Rectangle(e.X, e.Y);
+                Mediator.Instance.AddShape(rect);
+                _drawingPanel.Refresh();
+            }
+        }
+
+        private void _drawingPanel_Paint(object sender, PaintEventArgs e)
+        {
+            foreach (IShape shape in Mediator.Instance.DrawnShapes)
+            {
+                if (shape.GetType() == typeof(Rectangle))
+                {
+                    Rectangle rect = (Rectangle) shape;
+                    using (var pen = new Pen(rect.Color))
+                    {
+                        e.Graphics.DrawRectangle(pen, rect.X, rect.Y, rect.Width, rect.Height);
+                    }
+                }
+            }
+        }
     }
 }
