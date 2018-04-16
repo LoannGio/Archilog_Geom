@@ -1,0 +1,9 @@
+C:\Users\Loann\Documents\Visual Studio 2017\Projects\Archilog_Geom\Archilog_Geom\bin\Debug\Archilog_Geom.exe.config
+C:\Users\Loann\Documents\Visual Studio 2017\Projects\Archilog_Geom\Archilog_Geom\bin\Debug\Archilog_Geom.exe
+C:\Users\Loann\Documents\Visual Studio 2017\Projects\Archilog_Geom\Archilog_Geom\bin\Debug\Archilog_Geom.pdb
+C:\Users\Loann\Documents\Visual Studio 2017\Projects\Archilog_Geom\Archilog_Geom\obj\Debug\Archilog_Geom.csprojResolveAssemblyReference.cache
+C:\Users\Loann\Documents\Visual Studio 2017\Projects\Archilog_Geom\Archilog_Geom\obj\Debug\Archilog_Geom.Properties.Resources.resources
+C:\Users\Loann\Documents\Visual Studio 2017\Projects\Archilog_Geom\Archilog_Geom\obj\Debug\Archilog_Geom.csproj.GenerateResource.cache
+C:\Users\Loann\Documents\Visual Studio 2017\Projects\Archilog_Geom\Archilog_Geom\obj\Debug\Archilog_Geom.csproj.CoreCompileInputs.cache
+C:\Users\Loann\Documents\Visual Studio 2017\Projects\Archilog_Geom\Archilog_Geom\obj\Debug\Archilog_Geom.exe
+C:\Users\Loann\Documents\Visual Studio 2017\Projects\Archilog_Geom\Archilog_Geom\obj\Debug\Archilog_Geom.pdb
