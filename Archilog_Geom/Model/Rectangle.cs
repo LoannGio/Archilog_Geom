@@ -17,16 +17,16 @@ namespace Archilog_Geom
         private Point rotationCenter;
         public Color Color { get; set; }
 
-        public Rectangle(int x, int y)
+        public Rectangle(int x, int y, int width, int height, Color color)
         {
             X = x;
             Y = y;
-            Width = 10;
-            Height = 5;
+            Width = width;
+            Height = height;
             RotationAngle = 0;
             rotationCenter.X = X + Width / 2;
             rotationCenter.Y = Y + Height / 2;
-            Color = Color.Blue;
+            Color = color;
         }
     }
 }

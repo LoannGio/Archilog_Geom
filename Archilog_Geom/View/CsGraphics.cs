@@ -11,7 +11,6 @@ namespace Archilog_Geom
     public class CsGraphics : Form, IObservableGraphics
     {
         private Panel _toolBarPanel;
-        private Label label1;
         private Panel _drawingPanel;
 
         public CsGraphics()
@@ -75,7 +74,6 @@ namespace Archilog_Geom
         {
             this._drawingPanel = new System.Windows.Forms.Panel();
             this._toolBarPanel = new System.Windows.Forms.Panel();
-            this.label1 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // _drawingPanel
@@ -99,25 +97,14 @@ namespace Archilog_Geom
             this._toolBarPanel.Size = new System.Drawing.Size(134, 459);
             this._toolBarPanel.TabIndex = 1;
             // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(555, 12);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(35, 13);
-            this.label1.TabIndex = 2;
-            this.label1.Text = "label1";
-            // 
             // CsGraphics
             // 
             this.ClientSize = new System.Drawing.Size(836, 493);
-            this.Controls.Add(this.label1);
             this.Controls.Add(this._toolBarPanel);
             this.Controls.Add(this._drawingPanel);
             this.Name = "CsGraphics";
             this.Text = "Archilog Geom";
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 

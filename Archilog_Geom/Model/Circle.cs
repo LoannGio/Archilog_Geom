@@ -17,12 +17,12 @@ namespace Archilog_Geom
 
         public Color Color { get; set; }
 
-        public Circle(int x, int y)
+        public Circle(int x, int y, int radius, Color color)
         {
             X = x;
             Y = y;
-            Radius = 10;
-            Color = Color.Blue;
+            Radius = radius;
+            Color = color;
         }
 
         
