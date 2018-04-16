@@ -22,8 +22,8 @@ namespace Archilog_Geom
 
         public void InitializeToolBar()
         {
-            var shapesCount = Mediator.Instance.ToolBar.ToolBarShapes.Count;
-            for (int i = 0; i < shapesCount; i++)
+            var shapes = Mediator.Instance.ToolBar.ToolBarShapes;
+            for (int i = 0; i < shapes.Count; i++)
             {
                 #region create the sub panel
                 Panel p = new Panel();
@@ -37,8 +37,6 @@ namespace Archilog_Geom
                 #region draw shape on sub panel
                 Image img = new Bitmap(p.Width, p.Height);
                 Graphics g = Graphics.FromImage(img);
-
-                
 
                 g.DrawRectangle(new Pen(Color.Blue), 10,10,50,50);
                 p.BackgroundImage = img;
