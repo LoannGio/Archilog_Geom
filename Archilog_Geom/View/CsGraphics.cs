@@ -15,7 +15,7 @@ namespace Archilog_Geom
 
         public CsGraphics()
         {
-          InitializeComponent();
+            InitializeComponent();
             InitializeToolBar();
        
         }
@@ -48,23 +48,45 @@ namespace Archilog_Geom
         {
             Graphics g = Graphics.FromImage(img);
             Pen p;
+            int xMax = img.Width;
+            int yMax = img.Height;
 
             if (shape.GetType() == typeof(Rectangle))
             {
                 Rectangle rect = (Rectangle)shape;
                 p = new Pen(rect.Color);
-                g.DrawRectangle(p, rect.X, rect.Y, rect.Width, rect.Height);
+
+                System.Drawing.Rectangle drawing_rect = new System.Drawing.Rectangle(rect.X, rect.Y, rect.Width, rect.Height);
+                while (drawing_rect.X + drawing_rect.Width > xMax || drawing_rect.Y + drawing_rect.Height > yMax)
+                {
+                    drawing_rect.X /= 2;
+                    drawing_rect.Y /= 2;
+                    drawing_rect.Width /= 2;
+                    drawing_rect.Height /= 2;
+                }
+
+                g.DrawRectangle(p, drawing_rect);
             }
             else if (shape.GetType() == typeof(Circle))
             {
                 Circle circle = (Circle) shape;
                 p = new Pen(circle.Color);
-                g.DrawEllipse(p, circle.X - circle.Radius, circle.Y - circle.Radius, circle.Radius, circle.Radius);
+
+                System.Drawing.Rectangle drawing_rect = new System.Drawing.Rectangle(circle.X, circle.Y, circle.Radius, circle.Radius);
+                while (drawing_rect.X + drawing_rect.Width > xMax || drawing_rect.Y + drawing_rect.Height > yMax)
+                {
+                    drawing_rect.X /= 2;
+                    drawing_rect.Y /= 2;
+                    drawing_rect.Width /= 2;
+                    drawing_rect.Height /= 2;
+                }
+
+                g.DrawEllipse(p, drawing_rect.X, drawing_rect.Y, drawing_rect.Width, drawing_rect.Height);
 
             }
             else if (shape.GetType() == typeof(GroupShapes))
             {
-                GroupShapes circle = (GroupShapes)shape;
+                GroupShapes group = (GroupShapes)shape;
 
 
             }
@@ -86,8 +108,6 @@ namespace Archilog_Geom
             this._drawingPanel.Name = "_drawingPanel";
             this._drawingPanel.Size = new System.Drawing.Size(671, 459);
             this._drawingPanel.TabIndex = 0;
-            this._drawingPanel.Paint += new System.Windows.Forms.PaintEventHandler(this._drawingPanel_Paint);
-            this._drawingPanel.MouseDown += new System.Windows.Forms.MouseEventHandler(this._drawingPanel_MouseDown);
             // 
             // _toolBarPanel
             // 
@@ -108,31 +128,6 @@ namespace Archilog_Geom
             this.Text = "Archilog Geom";
             this.ResumeLayout(false);
 
-        }
-
-        private void _drawingPanel_MouseDown(object sender, MouseEventArgs e)
-        {
-            if (e.Button == System.Windows.Forms.MouseButtons.Left)
-            {
-                Rectangle rect = new Rectangle(e.X, e.Y);
-                Mediator.Instance.AddShape(rect);
-                _drawingPanel.Refresh();
-            }
-        }
-
-        private void _drawingPanel_Paint(object sender, PaintEventArgs e)
-        {
-            foreach (IShape shape in Mediator.Instance.DrawnShapes)
-            {
-                if (shape.GetType() == typeof(Rectangle))
-                {
-                    Rectangle rect = (Rectangle) shape;
-                    using (var pen = new Pen(rect.Color))
-                    {
-                        e.Graphics.DrawRectangle(pen, rect.X, rect.Y, rect.Width, rect.Height);
-                    }
-                }
-            }
         }
     }
 }

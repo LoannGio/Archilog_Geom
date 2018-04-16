@@ -15,7 +15,10 @@ namespace Archilog_Geom
         public ToolBar()
         {
             _toolbarShapes.Add(new Rectangle(10, 10, 50, 50, Color.Blue));
-            _toolbarShapes.Add(new Circle(10, 10, 50, Color.Red));
+            _toolbarShapes.Add(new Circle(20, 20, 100, Color.Red));
+
+
+
         }
     }
 }
