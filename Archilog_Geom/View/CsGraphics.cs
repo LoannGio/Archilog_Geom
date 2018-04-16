@@ -9,46 +9,68 @@ namespace Archilog_Geom
 {
     public class CsGraphics : Form, IObservableGraphics
     {
-        private TableLayoutPanel toolBarPanel;
+        private Panel toolBarPanel;
         private Panel _drawingPanel;
 
         public CsGraphics()
         {
           InitializeComponent();
             InitializeToolBar();
+       
         }
 
         public void InitializeToolBar()
         {
-            toolBarPanel.Invalidate();
+            var shapes = Mediator.Instance.ToolBar.ToolBarShapes;
+            for (int i = 0; i < shapes.Count; i++)
+            {
+                #region create the sub panel
+                Panel p = new Panel();
+                int itemHeight = 100;
+                int itemXposition = 0;
+                p.BorderStyle = BorderStyle.FixedSingle;
+                p.Location = new Point(itemXposition, i*itemHeight);
+                p.Size = new Size(toolBarPanel.Width, itemHeight);
+                #endregion
+
+                #region draw shape on the sub panel
+
+                Graphics g = p.CreateGraphics();
+                g.DrawRectangle(new Pen(Color.Blue), 10,10,50,50);
+                #endregion
+
+                toolBarPanel.Controls.Add(p);
+                //toolBarPanel.Refresh();
+            }
+
         }
 
         private void InitializeComponent()
         {
             this._drawingPanel = new System.Windows.Forms.Panel();
-            this.toolBarPanel = new System.Windows.Forms.TableLayoutPanel();
+            this.toolBarPanel = new System.Windows.Forms.Panel();
             this.SuspendLayout();
             // 
             // _drawingPanel
             // 
+            this._drawingPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this._drawingPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this._drawingPanel.Location = new System.Drawing.Point(153, 12);
+            this._drawingPanel.Location = new System.Drawing.Point(153, 31);
             this._drawingPanel.Name = "_drawingPanel";
-            this._drawingPanel.Size = new System.Drawing.Size(671, 478);
+            this._drawingPanel.Size = new System.Drawing.Size(671, 459);
             this._drawingPanel.TabIndex = 0;
             // 
             // toolBarPanel
             // 
-            this.toolBarPanel.CellBorderStyle = System.Windows.Forms.TableLayoutPanelCellBorderStyle.Single;
-            this.toolBarPanel.ColumnCount = 1;
-            this.toolBarPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.toolBarPanel.Location = new System.Drawing.Point(4, 12);
+            this.toolBarPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.toolBarPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.toolBarPanel.Location = new System.Drawing.Point(13, 31);
             this.toolBarPanel.Name = "toolBarPanel";
-            this.toolBarPanel.RowCount = 1;
-            this.toolBarPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.toolBarPanel.Size = new System.Drawing.Size(143, 478);
+            this.toolBarPanel.Size = new System.Drawing.Size(134, 459);
             this.toolBarPanel.TabIndex = 1;
-            this.toolBarPanel.CellPaint += new System.Windows.Forms.TableLayoutCellPaintEventHandler(this.toolBarPanel_CellPaint);
             // 
             // CsGraphics
             // 
@@ -61,15 +83,5 @@ namespace Archilog_Geom
 
         }
 
-        private void toolBarPanel_CellPaint(object sender, TableLayoutCellPaintEventArgs e)
-        {
-            List<IShape> toolbar = Mediator.Instance.ToolBar.ToolBarShapes;
-            toolBarPanel.RowCount = toolbar.Count;
-            for (int i = 0; i < toolbar.Count; i++)
-            {
-                var cell = toolBarPanel.GetControlFromPosition(0, i);
-
-            }
-        }
     }
 }
