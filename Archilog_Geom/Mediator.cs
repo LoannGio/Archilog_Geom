@@ -6,11 +6,12 @@ using System.Windows.Forms;
 
 namespace Archilog_Geom
 {
-    static class Mediator
+    class Mediator : IMediator
     {
         [STAThread]
         static void Main()
         {
+            //récupérer le form a partir de la Graphics et la créer comme ça
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new CsGraphics());
