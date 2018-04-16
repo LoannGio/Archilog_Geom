@@ -9,32 +9,24 @@ namespace Archilog_Geom
 {
     public class Rectangle : AObservableShape
     {
-        private int width, height, x, y, rotationAngle;
+        private int Width { get; set; }
+        private int Height { get; set; }
+        private int X { get; set; }
+        private int Y { get; set; }
+        private int RotationAngle { get; set; }
         private Point rotationCenter;
-        private Color color;
+        public Color Color { get; set; }
 
         public Rectangle(int x, int y)
         {
-            this.x = x;
-            this.y = y;
-            width = 10;
-            height = 5;
-            rotationAngle = 0;
-            rotationCenter.X = this.x + width / 2;
-            rotationCenter.Y = this.y + height / 2;
-            color = Color.Blue;
+            X = x;
+            Y = y;
+            Width = 10;
+            Height = 5;
+            RotationAngle = 0;
+            rotationCenter.X = X + Width / 2;
+            rotationCenter.Y = Y + Height / 2;
+            Color = Color.Blue;
         }
-
-        public int Width { get; set; }
-
-        public int Height { get; set; }
-
-        public int X { get; set; }
-
-        public int Y { get; set; }
-
-        public int RotationAngle { get; set; }
-
-        public Color Color { get; set; }
     }
 }
