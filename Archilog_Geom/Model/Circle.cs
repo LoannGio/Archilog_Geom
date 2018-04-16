@@ -19,5 +19,13 @@ namespace Archilog_Geom
             this.radius = 10;
             this.color = Color.Blue;
         }
+
+        public int X { get; set; }
+
+        public int Y { get; set; }
+
+        public int Radius { get; set; }
+
+        public Color Color { get; set; }
     }
 }
