@@ -12,7 +12,7 @@ namespace Archilog_Geom
 
         public static Mediator Instance => _instance ?? (_instance = new Mediator());
 
-        private List<IShape> _drawnShapes;
+        public List<IShape> DrawnShapes { get; set; } = new List<IShape>();
         private ToolBar _toolBar = new ToolBar();
         public ToolBar ToolBar => _toolBar;
         private static IGraphics g;
@@ -28,6 +28,11 @@ namespace Archilog_Geom
             g = new CsGraphics();
             Application.Run((Form) g);
 
+        }
+
+        public void AddShape(IShape shape)
+        {
+            DrawnShapes.Add(shape);
         }
     }
 }
