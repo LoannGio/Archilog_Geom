@@ -17,12 +17,24 @@ namespace Archilog_Geom
         {
             this.x = x;
             this.y = y;
-            width = 5;
-            height = 10;
+            width = 10;
+            height = 5;
             rotationAngle = 0;
             rotationCenter.X = this.x + width / 2;
             rotationCenter.Y = this.y + height / 2;
             color = Color.Blue;
         }
+
+        public int Width { get; set; }
+
+        public int Height { get; set; }
+
+        public int X { get; set; }
+
+        public int Y { get; set; }
+
+        public int RotationAngle { get; set; }
+
+        public Color Color { get; set; }
     }
 }
