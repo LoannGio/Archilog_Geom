@@ -8,21 +8,16 @@ namespace Archilog_Geom
 {
     public class GroupShapes : AObservableShape
     {
-        private List<IShape> children = new List<IShape>();
+        public List<IShape> Children { get; } = new List<IShape>();
 
         public void Add(IShape shape)
         {
-            children.Add(shape);
+            Children.Add(shape);
         }
 
         public void Remove(IShape shape)
         {
-            children.Add(shape);
-        }
-
-        public IShape GetChild(int i)
-        {
-            return children.ElementAt(i);
+            Children.Add(shape);
         }
     }
 }

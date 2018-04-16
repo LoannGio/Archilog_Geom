@@ -12,5 +12,7 @@ namespace Archilog_Geom
         void Attach(IShapeObserver obs);
         void Detach(IShapeObserver obs);
         void Notify();
+        void SetX(int i);
+        void SetY(int i);
     }
 }

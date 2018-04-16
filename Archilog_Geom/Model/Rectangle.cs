@@ -11,12 +11,10 @@ namespace Archilog_Geom
     {
         public int Width { get; set; }
         public int Height { get; set; }
-        public int X { get; set; }
-        public int Y { get; set; }
         public int RotationAngle { get; set; }
         private Point rotationCenter;
         public Color Color { get; set; }
-
+        
         public Rectangle(int x, int y, int width, int height, Color color)
         {
             X = x;
