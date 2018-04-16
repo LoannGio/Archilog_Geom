@@ -12,6 +12,8 @@ namespace Archilog_Geom
     {
         private Panel _toolBarPanel;
         private Panel _drawingPanel;
+        private int toolbarItemHeight = 100;
+        private IShape currentShape;
 
         public CsGraphics()
         {
@@ -27,17 +29,17 @@ namespace Archilog_Geom
             {
                 #region create the sub panel
                 Panel p = new Panel();
-                int itemHeight = 100;
                 int itemXposition = 0;
                 p.BorderStyle = BorderStyle.FixedSingle;
-                p.Location = new Point(itemXposition, i*itemHeight);
-                p.Size = new Size(_toolBarPanel.Width, itemHeight);
+                p.Location = new Point(itemXposition, i*toolbarItemHeight);
+                p.Size = new Size(_toolBarPanel.Width, toolbarItemHeight);
                 #endregion
 
                 #region draw shape on sub panel
                 Image img = new Bitmap(p.Width, p.Height);
                 drawShapeOnImage(img, shapes[i]);
                 p.BackgroundImage = img;
+                p.MouseDown += new MouseEventHandler(this.subPanel_MouseDown);
                 #endregion
 
                 _toolBarPanel.Controls.Add(p);
@@ -90,6 +92,13 @@ namespace Archilog_Geom
 
 
             }
+        }
+
+        private void subPanel_MouseDown(object sender, MouseEventArgs e)
+        {
+            Control c = (Control) sender;
+            int subPanelNumber = c.Top / 100;
+            currentShape = Mediator.Instance.ToolBar.ToolBarShapes[subPanelNumber];
         }
 
         private void InitializeComponent()
