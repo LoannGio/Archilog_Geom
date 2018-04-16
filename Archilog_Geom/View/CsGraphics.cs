@@ -11,6 +11,7 @@ namespace Archilog_Geom
     public class CsGraphics : Form, IObservableGraphics
     {
         private Panel _toolBarPanel;
+        private Label label1;
         private Panel _drawingPanel;
 
         public CsGraphics()
@@ -36,9 +37,7 @@ namespace Archilog_Geom
 
                 #region draw shape on sub panel
                 Image img = new Bitmap(p.Width, p.Height);
-                Graphics g = Graphics.FromImage(img);
-
-                g.DrawRectangle(new Pen(Color.Blue), 10,10,50,50);
+                drawShapeOnImage(img, shapes[i]);
                 p.BackgroundImage = img;
                 #endregion
 
@@ -46,11 +45,37 @@ namespace Archilog_Geom
             }
         }
 
+        private void drawShapeOnImage(Image img, IShape shape)
+        {
+            Graphics g = Graphics.FromImage(img);
+            Pen p;
+
+            if (shape.GetType() == typeof(Rectangle))
+            {
+                Rectangle rect = (Rectangle)shape;
+                p = new Pen(rect.Color);
+                g.DrawRectangle(p, rect.X, rect.Y, rect.Width, rect.Height);
+            }
+            else if (shape.GetType() == typeof(Circle))
+            {
+                Circle circle = (Circle) shape;
+                p = new Pen(circle.Color);
+                g.DrawEllipse(p, circle.X - circle.Radius, circle.Y - circle.Radius, circle.Radius, circle.Radius);
+
+            }
+            else if (shape.GetType() == typeof(GroupShapes))
+            {
+                GroupShapes circle = (GroupShapes)shape;
+
+
+            }
+        }
 
         private void InitializeComponent()
         {
             this._drawingPanel = new System.Windows.Forms.Panel();
             this._toolBarPanel = new System.Windows.Forms.Panel();
+            this.label1 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // _drawingPanel
@@ -76,14 +101,25 @@ namespace Archilog_Geom
             this._toolBarPanel.Size = new System.Drawing.Size(134, 459);
             this._toolBarPanel.TabIndex = 1;
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(555, 12);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(35, 13);
+            this.label1.TabIndex = 2;
+            this.label1.Text = "label1";
+            // 
             // CsGraphics
             // 
             this.ClientSize = new System.Drawing.Size(836, 493);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this._toolBarPanel);
             this.Controls.Add(this._drawingPanel);
             this.Name = "CsGraphics";
             this.Text = "Archilog Geom";
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
