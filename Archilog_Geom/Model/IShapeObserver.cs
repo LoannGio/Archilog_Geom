@@ -8,5 +8,6 @@ namespace Archilog_Geom
 {
     public interface IShapeObserver
     {
+        void Update(IShape shape);
     }
 }

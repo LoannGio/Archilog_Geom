@@ -29,7 +29,7 @@ namespace Archilog_Geom
         {
             foreach (IShapeObserver obs in listObservers)
             {
-                //obs.Update();
+                obs.Update(this);
             }
         }
     }
