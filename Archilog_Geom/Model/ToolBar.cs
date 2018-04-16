@@ -15,6 +15,7 @@ namespace Archilog_Geom
         {
             _toolbarShapes.Add(new Rectangle(10,10));
             _toolbarShapes.Add(new Rectangle(10, 10));
+            _toolbarShapes.Add(new Circle(50,50));
         }
     }
 }

@@ -37,10 +37,7 @@ namespace Archilog_Geom
 
                 #region draw shape on sub panel
                 Image img = new Bitmap(p.Width, p.Height);
-                Graphics g = Graphics.FromImage(img);
-
                 drawShapeOnImage(img, shapes[i]);
-
                 p.BackgroundImage = img;
                 #endregion
 
@@ -63,11 +60,13 @@ namespace Archilog_Geom
             {
                 Circle circle = (Circle) shape;
                 p = new Pen(circle.Color);
+                g.DrawEllipse(p, circle.X - circle.Radius, circle.Y - circle.Radius, circle.Radius, circle.Radius);
 
             }
             else if (shape.GetType() == typeof(GroupShapes))
             {
                 GroupShapes circle = (GroupShapes)shape;
+
 
             }
         }
