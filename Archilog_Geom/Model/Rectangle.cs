@@ -26,5 +26,12 @@ namespace Archilog_Geom
             rotationCenter.Y = Y + Height / 2;
             Color = color;
         }
+
+        public override bool Contains(int x, int y)
+        {
+            if (x >= X && x <= X + Width && y >= Y && y <= Y + Height)
+                return true;
+            return false;
+        }
     }
 }

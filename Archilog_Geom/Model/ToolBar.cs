@@ -9,16 +9,12 @@ namespace Archilog_Geom
 {
     class ToolBar
     {
-        private List<IShape> _toolbarShapes = new List<IShape>();
-        public List<IShape> ToolBarShapes => _toolbarShapes;
+        public List<IShape> ToolBarShapes { get; } = new List<IShape>();
 
         public ToolBar()
         {
-            _toolbarShapes.Add(new Rectangle(10, 10, 50, 50, Color.Blue));
-            _toolbarShapes.Add(new Circle(20, 20, 100, Color.Red));
-
-
-
+            ToolBarShapes.Add(new Rectangle(10, 10, 50, 50, Color.LightGreen));
+            ToolBarShapes.Add(new Circle(20, 20, 100, Color.Red));
         }
     }
 }

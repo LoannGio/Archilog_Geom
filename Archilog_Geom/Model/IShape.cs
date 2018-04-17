@@ -14,5 +14,6 @@ namespace Archilog_Geom
         void Notify();
         void SetX(int i);
         void SetY(int i);
+        bool Contains(int x, int y);
     }
 }

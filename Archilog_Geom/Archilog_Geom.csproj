@@ -57,7 +57,7 @@
     <Compile Include="View\Graphics.cs" />
     <Compile Include="Model\GroupShapes.cs" />
     <Compile Include="Controller\IMediator.cs" />
-    <Compile Include="Model\IRigheClickPopUp.cs" />
+    <Compile Include="Model\IRightClickPopUp.cs" />
     <Compile Include="Model\IShapeObserver.cs" />
     <Compile Include="Model\IToolBarObserver.cs" />
     <Compile Include="View\IWindowObserver.cs" />
@@ -78,6 +78,7 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <EmbeddedResource Include="View\CsGraphics.resx">
       <DependentUpon>CsGraphics.cs</DependentUpon>
@@ -94,6 +95,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="dustbin.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
