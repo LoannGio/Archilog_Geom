@@ -8,6 +8,9 @@ namespace Archilog_Geom
 {
     public abstract class AObservableShape : IShape
     {
+
+        public int X { get; set; }
+        public int Y { get; set; }
         private HashSet<IShapeObserver> listObservers = new HashSet<IShapeObserver>();
 
         public void Attach(IShapeObserver obs)
@@ -31,6 +34,16 @@ namespace Archilog_Geom
             {
                 obs.Update(this);
             }
+        }
+
+        public void SetX(int i)
+        {
+            X = i;
+        }
+
+        public void SetY(int i)
+        {
+            Y = i;
         }
     }
 }
