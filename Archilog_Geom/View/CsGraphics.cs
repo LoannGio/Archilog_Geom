@@ -99,6 +99,7 @@ namespace Archilog_Geom
             Control c = (Control) sender;
             int subPanelNumber = c.Top / 100;
             currentShape = Mediator.Instance.ToolBar.ToolBarShapes[subPanelNumber];
+            int x = 10;
         }
 
         private void InitializeComponent()
@@ -117,6 +118,7 @@ namespace Archilog_Geom
             this._drawingPanel.Name = "_drawingPanel";
             this._drawingPanel.Size = new System.Drawing.Size(671, 459);
             this._drawingPanel.TabIndex = 0;
+            this._drawingPanel.MouseUp += new System.Windows.Forms.MouseEventHandler(this._drawingPanel_MouseUp);
             // 
             // _toolBarPanel
             // 
@@ -137,6 +139,13 @@ namespace Archilog_Geom
             this.Text = "Archilog Geom";
             this.ResumeLayout(false);
 
+        }
+
+        private void _drawingPanel_MouseUp(object sender, MouseEventArgs e)
+        {
+            Mediator.Instance.DrawnShapes.Add(currentShape);
+
+            currentShape = null;
         }
     }
 }
