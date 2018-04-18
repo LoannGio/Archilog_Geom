@@ -10,14 +10,15 @@ namespace Archilog_Geom
     public class Circle : AObservableShape
     {
         public int Diameter { get; set; }
-        public Color Color { get; set; }
+        private Color _color;
+        public Color Color => _color;
 
         public Circle(int x, int y, int diameter, Color color)
         {
             X = x;
             Y = y;
             Diameter = diameter;
-            Color = color;
+            _color = color;
         }
 
 
@@ -32,6 +33,16 @@ namespace Archilog_Geom
             return false;
         }
 
+        public override IRightClickPopUp CreateRightClickPopUp()
+        {
+            return new PopUpCircle(this);
+        }
+
+        public override void SetColor(Color c)
+        {
+            _color = c;
+        }
+
         private int EuclideanDistance(int x1, int y1, int x2, int y2)
         {
             double a = x2 - x1;
@@ -39,5 +50,6 @@ namespace Archilog_Geom
 
             return (int)Math.Sqrt(a * a + b * b);
         }
+
     }
 }

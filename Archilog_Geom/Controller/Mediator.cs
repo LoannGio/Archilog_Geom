@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -9,18 +10,18 @@ namespace Archilog_Geom
     class Mediator : IMediator
     {
         private static Mediator _instance;
-
         public static Mediator Instance => _instance ?? (_instance = new Mediator());
-
-
-        public List<IShape> DrawnShapes { get; } = new List<IShape>();
-
+        
         private ToolBar _toolBar = new ToolBar();
         public ToolBar ToolBar => _toolBar;
 
         private IShape _currentShape;
         public List<IShape> SelectedShapes { get; } = new List<IShape>();
+        public List<IShape> DrawnShapes { get; } = new List<IShape>();
         public bool ClickedOnSelectedShape { get; set; } = false;
+
+        private IRightClickPopUp _rightClickPopUp = null;
+        public IRightClickPopUp RightClickPopUp => _rightClickPopUp;
 
         private static IGraphics g;
         
@@ -82,35 +83,53 @@ namespace Archilog_Geom
 
         public void AddRemoveSelectedShape(int x, int y)
         {
-            bool found = false;
-            for (int i = DrawnShapes.Count-1; i >= 0; i--)
+            var shape = DrawnShapes.LastOrDefault(s => s.Contains(x, y));
+            if (shape == null)
             {
-                var shape = DrawnShapes[i];
-                if (shape.Contains(x, y))
-                {
-                    found = true;
-                    if (!SelectedShapes.Contains(shape))
-                        SelectedShapes.Add(shape);
-                    else
-                        SelectedShapes.Remove(shape);
-                    break;
-                }
-            }
-            if(!found)
                 SelectedShapes.Clear();
+            }
+            else
+            {
+                if (!SelectedShapes.Contains(shape))
+                    SelectedShapes.Add(shape);
+                else
+                    SelectedShapes.Remove(shape);
+            }     
             g.RefreshView();
         }
 
-        public void DrawingPanelMouseDownCalled(int mouseX, int mouseY)
+        public void DrawingPanelLeftMouseButtonPressed(int mouseX, int mouseY)
         {
-            foreach (var shape in SelectedShapes)
+            var shape = SelectedShapes.FirstOrDefault(s => s.Contains(mouseX, mouseY));
+            if (shape != null)
             {
-                if (shape.Contains(mouseX, mouseY))
+                ClickedOnSelectedShape = true;
+            }
+        }
+
+        public void DrawingPanelRightMouseButtonPressed(int mouseX, int mouseY)
+        {
+            _rightClickPopUp = null;
+            bool clickedOnSelectedShape = SelectedShapes.Where(s => s.Contains(mouseX, mouseY)).ToList().Count > 0;
+            if (SelectedShapes.Count > 1 && clickedOnSelectedShape)
+            {
+                GroupShapes tmpSelectedShapes = new GroupShapes();
+                foreach (var shape in SelectedShapes)
                 {
-                    ClickedOnSelectedShape = true;
-                    break;
+                    tmpSelectedShapes.Add(shape);                    
+                }
+                _rightClickPopUp = tmpSelectedShapes.CreateRightClickPopUp();
+            }
+            else
+            {
+                var shape = DrawnShapes.LastOrDefault(s => s.Contains(mouseX, mouseY));
+                if (shape != null)
+                {
+                    _rightClickPopUp = shape.CreateRightClickPopUp();
                 }
             }
+            if(_rightClickPopUp != null)
+                g.OpenRightClickPopUp();
         }
 
         public void SaveShapesInToolbar()
@@ -120,20 +139,101 @@ namespace Archilog_Geom
                 IShape toolBarNewShape = (IShape)shape.Clone();
                 _toolBar.ToolBarShapes.Add(toolBarNewShape);
             }
+
             ClickedOnSelectedShape = false;
             g.RefreshToolBar();
         }
 
         public void DeleteSelectedShapes()
         {
-            foreach (var shape in SelectedShapes)
-            {
-                if(DrawnShapes.Contains(shape))
-                    DrawnShapes.Remove(shape);
-            }
+            DrawnShapes.RemoveAll(s => SelectedShapes.Contains(s));
+
             SelectedShapes.Clear();
             g.RefreshView();
             ClickedOnSelectedShape = false;
+        }
+
+        public void HandleRightClickMenuItemClick(int i)
+        {
+            _rightClickPopUp.Handle(i);
+        }
+
+        public void CircleEditMenu(Circle c)
+        {
+            g.OpenCircleEditMenu(c);
+        }
+
+        public void RectangleEditMenu(Rectangle r)
+        {
+            g.OpenRectangleEditMenu(r);
+        }
+
+        public void GroupEditMenu(GroupShapes group)
+        {
+            g.OpenGroupEditMenu(group);
+        }
+
+        public void UpdateGroup(GroupShapes g, Color color)
+        {
+            g.SetColor(color);
+        }
+
+        public void UpdateRectangle(Rectangle r, int x, int y, int width, int height, Color color)
+        {
+            r.X = x;
+            r.Y = y;
+            r.Width = width;
+            r.Height = height;
+            r.SetColor(color);
+        }
+
+        public void UpdateCircle(Circle c, int x, int y, int diameter, Color color)
+        {
+            c.X = x;
+            c.Y = y;
+            c.Diameter = diameter;
+            c.SetColor(color);
+        }
+
+        public void EraseShape(IShape shape)
+        {
+            if (DrawnShapes.Contains(shape))
+            {
+                DrawnShapes.Remove(shape);
+            }
+            else
+            {
+                foreach (var child in ((GroupShapes)shape).Children)
+                {
+                    DrawnShapes.Remove(child);
+                }
+            }
+            g.RefreshView();
+        }
+
+        public void CreateGroup(GroupShapes gr)
+        {
+            foreach (var shape in gr.Children)
+            {
+                DrawnShapes.Remove(shape);
+                SelectedShapes.Remove(shape);
+            }
+            DrawnShapes.Add(gr);
+            SelectedShapes.Add(gr);
+        }
+
+        public void DeleteGroup(GroupShapes gr)
+        {
+            if (DrawnShapes.Contains(gr))
+            {
+                DrawnShapes.Remove(gr);
+                foreach (var shape in gr.Children)
+                {
+                    DrawnShapes.Add(shape);
+                }
+                SelectedShapes.Clear();
+                g.RefreshView();
+            }
         }
     }
 }

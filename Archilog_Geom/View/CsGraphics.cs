@@ -1,6 +1,8 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
+using Archilog_Geom.View;
 
 namespace Archilog_Geom
 {
@@ -8,9 +10,11 @@ namespace Archilog_Geom
     {
         private Panel _toolBarPanel;
         private Panel _drawingPanel;
+        public Panel DrawingPanel => _drawingPanel;
         private Label label1;
         private PictureBox garbage;
         private int toolbarItemHeight = 100;
+        private Pen selectedItemPen = new Pen(Color.Black);
 
         public CsGraphics()
         {
@@ -53,6 +57,46 @@ namespace Archilog_Geom
         public void RefreshToolBar()
         {
             InitializeToolBar();
+        }
+
+
+        public void OpenRightClickPopUp()
+        {
+            ContextMenu popUp = new ContextMenu();
+            foreach (var item in Mediator.Instance.RightClickPopUp.RightClickPopUpItems)
+            {
+                MenuItem mi = new MenuItem(item);
+                mi.Click += RightClickMenuItem_Click;
+                popUp.MenuItems.Add(mi);
+            }
+
+            int mouseX = MousePosition.X - this.Bounds.X;
+            int mouseY = MousePosition.Y - this.Bounds.Y - _drawingPanel.Bounds.Y;
+            popUp.Show(this, new Point(mouseX, mouseY));
+        }
+
+        public void OpenCircleEditMenu(Circle c)
+        {
+            var CircleEditor = new CircleEditor(this, c);
+            CircleEditor.Show();
+        }
+
+        public void OpenRectangleEditMenu(Rectangle r)
+        {
+            var rectangleEditor = new RectangleEditor(this, r);
+            rectangleEditor.Show();
+        }
+
+        public void OpenGroupEditMenu(GroupShapes g)
+        {
+            var GroupEditor = new GroupEditor(this, g);
+            GroupEditor.Show();
+        }
+
+
+        private void RightClickMenuItem_Click(object sender, EventArgs eventArgs)
+        {
+            Mediator.Instance.HandleRightClickMenuItemClick(((MenuItem)sender).Index);
         }
 
         private void drawShapeOnImage(Image img, IShape shape)
@@ -151,11 +195,16 @@ namespace Archilog_Geom
                 if (ModifierKeys.HasFlag(Keys.Control))
                 {
                     Mediator.Instance.AddRemoveSelectedShape(e.X, e.Y);
+                    label1.Text = Mediator.Instance.SelectedShapes.Count.ToString();
                 }
                 else
                 {
-                    Mediator.Instance.DrawingPanelMouseDownCalled(e.X, e.Y);
+                    Mediator.Instance.DrawingPanelLeftMouseButtonPressed(e.X, e.Y);
                 }
+            }
+            else if (e.Button == MouseButtons.Right)
+            {
+                Mediator.Instance.DrawingPanelRightMouseButtonPressed(e.X, e.Y);
             }
         }
 
@@ -189,36 +238,93 @@ namespace Archilog_Geom
         private void _drawingPanel_Paint(object sender, PaintEventArgs e)
         {
             e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
-            SolidBrush brush;
-            Color selectedItemColor = Color.Black;
             foreach (var shape in Mediator.Instance.DrawnShapes)
+            {
+                PaintShape(e, shape);
+            }
+        }
+
+        private void PaintShape(PaintEventArgs e, IShape shape)
+        {
+            if (shape.GetType() == typeof(Rectangle))
+            {
+                PaintRectangle(e, (Rectangle)shape);
+            }
+            else if (shape.GetType() == typeof(Circle))
+            {
+                PaintCircle(e, (Circle)shape);
+
+            }
+            else if (shape.GetType() == typeof(GroupShapes))
+            {
+                bool AmISelected = Mediator.Instance.SelectedShapes.Contains((GroupShapes)shape);
+                PaintGroupShapes(e, (GroupShapes)shape, AmISelected);
+            }
+        }
+
+        private void PaintGroupShapes(PaintEventArgs e, GroupShapes group, bool AmISelected)
+        {
+            foreach (var shape in group.Children)
             {
                 if (shape.GetType() == typeof(Rectangle))
                 {
-                    Rectangle rect = (Rectangle) shape;
-                    brush = new SolidBrush(rect.Color);
-                    e.Graphics.FillRectangle(brush, rect.X, rect.Y, rect.Width, rect.Height);
-                    if (Mediator.Instance.SelectedShapes.Contains(shape))
-                    {
-                        e.Graphics.DrawRectangle(new Pen(selectedItemColor), rect.X, rect.Y, rect.Width, rect.Height);
-                    }
+                    PaintRectangleGroup(e, (Rectangle)shape, AmISelected);
                 }
                 else if (shape.GetType() == typeof(Circle))
                 {
-                    Circle circle = (Circle)shape;
-                    brush = new SolidBrush(circle.Color);
-                    e.Graphics.FillEllipse(brush, circle.X, circle.Y, circle.Diameter, circle.Diameter);
-                    if (Mediator.Instance.SelectedShapes.Contains(shape))
-                    {
-                        e.Graphics.DrawEllipse(new Pen(selectedItemColor), circle.X, circle.Y, circle.Diameter, circle.Diameter);
-                    }
+                    PaintCircleGroup(e, (Circle)shape, AmISelected);
                 }
                 else if (shape.GetType() == typeof(GroupShapes))
                 {
-
+                    PaintGroupShapes(e, (GroupShapes)shape, AmISelected);
                 }
             }
         }
+
+        private void PaintRectangleGroup(PaintEventArgs e, Rectangle rect, bool AmISelected)
+        {
+            SolidBrush brush;
+            brush = new SolidBrush(rect.Color);
+            e.Graphics.FillRectangle(brush, rect.X, rect.Y, rect.Width, rect.Height);
+            if (AmISelected)
+            {
+                e.Graphics.DrawRectangle(selectedItemPen, rect.X, rect.Y, rect.Width, rect.Height);
+            }
+        }
+
+        private void PaintCircleGroup(PaintEventArgs e, Circle circle, bool AmISelected)
+        {
+            SolidBrush brush;
+            brush = new SolidBrush(circle.Color);
+            e.Graphics.FillEllipse(brush, circle.X, circle.Y, circle.Diameter, circle.Diameter);
+            if (AmISelected)
+            {
+                e.Graphics.DrawEllipse(selectedItemPen, circle.X, circle.Y, circle.Diameter, circle.Diameter);
+            }
+        }
+
+        private void PaintRectangle(PaintEventArgs e, Rectangle rect)
+        {
+            SolidBrush brush;
+            brush = new SolidBrush(rect.Color);
+            e.Graphics.FillRectangle(brush, rect.X, rect.Y, rect.Width, rect.Height);
+            if (Mediator.Instance.SelectedShapes.Contains(rect))
+            {
+                e.Graphics.DrawRectangle(selectedItemPen, rect.X, rect.Y, rect.Width, rect.Height);
+            }
+        }
+
+        private void PaintCircle(PaintEventArgs e, Circle circle)
+        {
+            SolidBrush brush;
+            brush = new SolidBrush(circle.Color);
+            e.Graphics.FillEllipse(brush, circle.X, circle.Y, circle.Diameter, circle.Diameter);
+            if (Mediator.Instance.SelectedShapes.Contains(circle))
+            {
+                e.Graphics.DrawEllipse(selectedItemPen, circle.X, circle.Y, circle.Diameter, circle.Diameter);
+            }
+        }
+
 
         private void InitializeComponent()
         {

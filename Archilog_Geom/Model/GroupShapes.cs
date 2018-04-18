@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,6 +10,7 @@ namespace Archilog_Geom
     public class GroupShapes : AObservableShape
     {
         public List<IShape> Children { get; } = new List<IShape>();
+        public Color Color => System.Drawing.Color.Black;
 
         public void Add(IShape shape)
         {
@@ -22,7 +24,26 @@ namespace Archilog_Geom
 
         public override bool Contains(int x, int y)
         {
-            throw new NotImplementedException();
+            foreach (var shape in Children)
+            {
+                if (shape.Contains(x, y))
+                    return true;
+            }
+
+            return false;
+        }
+
+        public override IRightClickPopUp CreateRightClickPopUp()
+        {
+            return new PopUpGroup(this);
+        }
+
+        public override void SetColor(Color c)
+        {
+            foreach (var shape in Children)
+            {
+                shape.SetColor(c);
+            }
         }
     }
 }

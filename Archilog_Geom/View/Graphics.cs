@@ -11,5 +11,9 @@ namespace Archilog_Geom
         void InitializeToolBar();
         void RefreshView();
         void RefreshToolBar();
+        void OpenRightClickPopUp();
+        void OpenCircleEditMenu(Circle c);
+        void OpenRectangleEditMenu(Rectangle r);
+        void OpenGroupEditMenu(GroupShapes g);
     }
 }

@@ -6,7 +6,11 @@ using System.Threading.Tasks;
 
 namespace Archilog_Geom
 {
-    interface IRightClickPopUp
+    public interface IRightClickPopUp
     {
+        void Edit();
+        void Delete();
+        void Handle(int i);
+        List<String> RightClickPopUpItems { get; }
     }
 }

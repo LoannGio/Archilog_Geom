@@ -13,8 +13,9 @@ namespace Archilog_Geom
         public int Height { get; set; }
         public int RotationAngle { get; set; }
         private Point rotationCenter;
-        public Color Color { get; set; }
-        
+        private Color _color;
+        public Color Color => _color;
+
         public Rectangle(int x, int y, int width, int height, Color color)
         {
             X = x;
@@ -24,7 +25,7 @@ namespace Archilog_Geom
             RotationAngle = 0;
             rotationCenter.X = X + Width / 2;
             rotationCenter.Y = Y + Height / 2;
-            Color = color;
+            _color = color;
         }
 
         public override bool Contains(int x, int y)
@@ -32,6 +33,16 @@ namespace Archilog_Geom
             if (x >= X && x <= X + Width && y >= Y && y <= Y + Height)
                 return true;
             return false;
+        }
+
+        public override IRightClickPopUp CreateRightClickPopUp()
+        {
+           return new PopUpRectangle(this);
+        }
+
+        public override void SetColor(Color c)
+        {
+            _color = c;
         }
     }
 }
