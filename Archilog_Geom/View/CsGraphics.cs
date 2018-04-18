@@ -107,12 +107,6 @@ namespace Archilog_Geom
 
         private void subPanel_MouseDown(object sender, MouseEventArgs e)
         {
-<<<<<<< HEAD
-            Control c = (Control) sender;
-            int subPanelNumber = c.Top / 100;
-            currentShape = (IShape)Mediator.Instance.ToolBar.ToolBarShapes[subPanelNumber].Clone();
-            int x = 10;
-=======
             if (e.Button == MouseButtons.Left)
             {
                 Control c = (Control)sender;
@@ -224,7 +218,6 @@ namespace Archilog_Geom
 
                 }
             }
->>>>>>> 2270c05ee011d0752e9d4455c2dceace9039474a
         }
 
         private void InitializeComponent()
@@ -246,11 +239,8 @@ namespace Archilog_Geom
             this._drawingPanel.Name = "_drawingPanel";
             this._drawingPanel.Size = new System.Drawing.Size(671, 459);
             this._drawingPanel.TabIndex = 0;
-<<<<<<< HEAD
-=======
             this._drawingPanel.Paint += new System.Windows.Forms.PaintEventHandler(this._drawingPanel_Paint);
             this._drawingPanel.MouseDown += new System.Windows.Forms.MouseEventHandler(this._drawingPanel_MouseDown);
->>>>>>> 2270c05ee011d0752e9d4455c2dceace9039474a
             this._drawingPanel.MouseUp += new System.Windows.Forms.MouseEventHandler(this._drawingPanel_MouseUp);
             // 
             // _toolBarPanel
@@ -295,13 +285,6 @@ namespace Archilog_Geom
             this.ResumeLayout(false);
             this.PerformLayout();
 
-        }
-
-        private void _drawingPanel_MouseUp(object sender, MouseEventArgs e)
-        {
-            Mediator.Instance.DrawnShapes.Add(currentShape);
-
-            currentShape = null;
         }
     }
 }
