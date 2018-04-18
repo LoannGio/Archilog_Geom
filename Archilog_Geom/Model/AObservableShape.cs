@@ -20,7 +20,7 @@ namespace Archilog_Geom
 
         public object Clone()
         {
-            return this.MemberwiseClone();
+            return MemberwiseClone();
         }
 
         public void Detach(IShapeObserver obs)
@@ -45,5 +45,7 @@ namespace Archilog_Geom
         {
             Y = i;
         }
+
+        public abstract bool Contains(int x, int y);
     }
 }

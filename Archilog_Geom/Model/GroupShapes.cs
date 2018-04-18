@@ -19,5 +19,10 @@ namespace Archilog_Geom
         {
             Children.Add(shape);
         }
+
+        public override bool Contains(int x, int y)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

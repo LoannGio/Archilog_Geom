@@ -9,19 +9,35 @@ namespace Archilog_Geom
 {
     public class Circle : AObservableShape
     {
-        public int X { get; set; }
-        public int Y { get; set; }
-        public int Radius { get; set; }
+        public int Diameter { get; set; }
         public Color Color { get; set; }
 
-        public Circle(int x, int y, int radius, Color color)
+        public Circle(int x, int y, int diameter, Color color)
         {
             X = x;
             Y = y;
-            Radius = radius;
+            Diameter = diameter;
             Color = color;
         }
 
-        
+
+        public override bool Contains(int x, int y)
+        {
+            int circleCenterX = X + Diameter/2;
+            int circleCenterY = Y + Diameter/2;
+
+            if (EuclideanDistance(circleCenterX, circleCenterY, x, y) <= Diameter/2)
+                return true;
+
+            return false;
+        }
+
+        private int EuclideanDistance(int x1, int y1, int x2, int y2)
+        {
+            double a = x2 - x1;
+            double b = y2 - y1;
+
+            return (int)Math.Sqrt(a * a + b * b);
+        }
     }
 }

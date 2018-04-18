@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Archilog_Geom
 {
-    abstract class ARightClickPopUp : IRigheClickPopUp
+    abstract class ARightClickPopUp : IRightClickPopUp
     {
     }
 }
