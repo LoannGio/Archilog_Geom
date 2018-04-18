@@ -98,7 +98,7 @@ namespace Archilog_Geom
         {
             Control c = (Control) sender;
             int subPanelNumber = c.Top / 100;
-            currentShape = Mediator.Instance.ToolBar.ToolBarShapes[subPanelNumber];
+            currentShape = (IShape)Mediator.Instance.ToolBar.ToolBarShapes[subPanelNumber].Clone();
             int x = 10;
         }
 
