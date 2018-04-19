@@ -22,6 +22,16 @@ namespace Archilog_Geom.View
             _parent = parent;
             _parent.Enabled = false;
             _group = group;
+            int width = group.XMax - group.X;
+            int height = group.YMax - group.Y;
+
+            originXField.Minimum = - width / 2;
+            originXField.Maximum = _parent.DrawingPanel.Width - width / 2;
+            originXField.Value = group.X;
+
+            originYField.Minimum = - height / 2;
+            originYField.Maximum = _parent.DrawingPanel.Height - height / 2;
+            originYField.Value = group.Y;
 
             colorIndicator.BackColor = _group.Color;
 
@@ -38,14 +48,14 @@ namespace Archilog_Geom.View
 
         private void submitButton_Click(object sender, EventArgs e)
         {
-            Mediator.Instance.UpdateGroup(_group, colorIndicator.BackColor);
+            Mediator.Instance.UpdateGroup(_group, colorIndicator.BackColor, (int)originXField.Value, (int)originYField.Value);
             _parent.DrawingPanel.Refresh();
             this.Close();
         }
 
         private void applyButton_Click(object sender, EventArgs e)
         {
-            Mediator.Instance.UpdateGroup(_group, colorIndicator.BackColor);
+            Mediator.Instance.UpdateGroup(_group, colorIndicator.BackColor, (int)originXField.Value, (int)originYField.Value);
             _parent.DrawingPanel.Refresh();
         }
 

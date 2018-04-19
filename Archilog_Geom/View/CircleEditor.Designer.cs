@@ -59,7 +59,7 @@
             // diameterLabel
             // 
             this.diameterLabel.AutoSize = true;
-            this.diameterLabel.Location = new System.Drawing.Point(25, 25);
+            this.diameterLabel.Location = new System.Drawing.Point(25, 65);
             this.diameterLabel.Name = "diameterLabel";
             this.diameterLabel.Size = new System.Drawing.Size(49, 13);
             this.diameterLabel.TabIndex = 1;
@@ -68,7 +68,7 @@
             // originPoint
             // 
             this.originPoint.AutoSize = true;
-            this.originPoint.Location = new System.Drawing.Point(34, 65);
+            this.originPoint.Location = new System.Drawing.Point(34, 25);
             this.originPoint.Name = "originPoint";
             this.originPoint.Size = new System.Drawing.Size(40, 13);
             this.originPoint.TabIndex = 2;
@@ -85,7 +85,7 @@
             // 
             // diameterField
             // 
-            this.diameterField.Location = new System.Drawing.Point(95, 23);
+            this.diameterField.Location = new System.Drawing.Point(95, 65);
             this.diameterField.Name = "diameterField";
             this.diameterField.Size = new System.Drawing.Size(53, 20);
             this.diameterField.TabIndex = 5;
@@ -98,7 +98,7 @@
             // origineXLabel
             // 
             this.origineXLabel.AutoSize = true;
-            this.origineXLabel.Location = new System.Drawing.Point(92, 65);
+            this.origineXLabel.Location = new System.Drawing.Point(88, 25);
             this.origineXLabel.Name = "origineXLabel";
             this.origineXLabel.Size = new System.Drawing.Size(23, 13);
             this.origineXLabel.TabIndex = 6;
@@ -107,7 +107,7 @@
             // origineYLabel
             // 
             this.origineYLabel.AutoSize = true;
-            this.origineYLabel.Location = new System.Drawing.Point(180, 65);
+            this.origineYLabel.Location = new System.Drawing.Point(176, 25);
             this.origineYLabel.Name = "origineYLabel";
             this.origineYLabel.Size = new System.Drawing.Size(20, 13);
             this.origineYLabel.TabIndex = 7;
@@ -115,14 +115,14 @@
             // 
             // originXField
             // 
-            this.originXField.Location = new System.Drawing.Point(121, 63);
+            this.originXField.Location = new System.Drawing.Point(117, 23);
             this.originXField.Name = "originXField";
             this.originXField.Size = new System.Drawing.Size(53, 20);
             this.originXField.TabIndex = 8;
             // 
             // originYField
             // 
-            this.originYField.Location = new System.Drawing.Point(206, 63);
+            this.originYField.Location = new System.Drawing.Point(202, 23);
             this.originYField.Name = "originYField";
             this.originYField.Size = new System.Drawing.Size(53, 20);
             this.originYField.TabIndex = 9;

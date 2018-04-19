@@ -48,12 +48,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Model\AObservableShape.cs" />
+    <Compile Include="Model\AShape.cs" />
     <Compile Include="Model\ARightClickPopUp.cs" />
-    <Compile Include="Model\IShape.cs" />
-    <Compile Include="View\AWindowsObserver.cs" />
     <Compile Include="Controller\CareTaker.cs" />
+    <Compile Include="Model\IShape.cs" />
     <Compile Include="Model\Circle.cs" />
+    <Compile Include="Controller\Memento.cs" />
     <Compile Include="View\CircleEditor.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -63,22 +63,17 @@
     <Compile Include="View\CsGraphics.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="View\Graphics.cs" />
+    <Compile Include="View\IGraphics.cs" />
     <Compile Include="Model\GroupShapes.cs" />
     <Compile Include="Controller\IMediator.cs" />
     <Compile Include="Model\IRightClickPopUp.cs" />
-    <Compile Include="Model\IShapeObserver.cs" />
-    <Compile Include="Model\IToolBarObserver.cs" />
     <Compile Include="View\GroupEditor.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="View\GroupEditor.Designer.cs">
       <DependentUpon>GroupEditor.cs</DependentUpon>
     </Compile>
-    <Compile Include="View\IWindowObserver.cs" />
     <Compile Include="Controller\Mediator.cs" />
-    <Compile Include="Controller\Memento.cs" />
-    <Compile Include="View\ObservableGraphics.cs" />
     <Compile Include="Model\PopUpCircle.cs" />
     <Compile Include="Model\PopUpGroup.cs" />
     <Compile Include="Model\PopUpRectangle.cs" />
@@ -127,7 +122,11 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="dustbin.png" />
+    <None Include="img\dustbin.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="img\redo_arrow.png" />
+    <Content Include="img\undo_arrow.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

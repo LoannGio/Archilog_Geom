@@ -4,24 +4,24 @@ using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Archilog_Geom.Model;
 
 namespace Archilog_Geom
 {
-    class Mediator : IMediator
+    public class Mediator : IMediator
     {
         private static Mediator _instance;
         public static Mediator Instance => _instance ?? (_instance = new Mediator());
-        
-        private ToolBar _toolBar = new ToolBar();
-        public ToolBar ToolBar => _toolBar;
+
+        public static ToolBar ToolBar { get; private set; } = new ToolBar();
 
         private IShape _currentShape;
-        public List<IShape> SelectedShapes { get; } = new List<IShape>();
-        public List<IShape> DrawnShapes { get; } = new List<IShape>();
-        public bool ClickedOnSelectedShape { get; set; } = false;
+        public static List<IShape> SelectedShapes { get; } = new List<IShape>();
+        public static List<IShape> DrawnShapes { get; private set; } = new List<IShape>();
+        public static bool ClickedOnSelectedShape { get; set; } = false;
 
-        private IRightClickPopUp _rightClickPopUp = null;
-        public IRightClickPopUp RightClickPopUp => _rightClickPopUp;
+        private static IRightClickPopUp _rightClickPopUp = null;
+        public static IRightClickPopUp RightClickPopUp => _rightClickPopUp;
 
         private static IGraphics g;
         
@@ -33,29 +33,30 @@ namespace Archilog_Geom
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
+            
+            ToolBar.ToolBarShapes.Add(new Rectangle(10, 10, 50, 50, Color.LightGreen));
+            ToolBar.ToolBarShapes.Add(new Circle(20, 20, 100, Color.Red));
+
+            CreateMemento();
             g = new CsGraphics();
             Application.Run((Form) g);
 
         }
 
-        public void AddShape(IShape shape)
-        {
-            DrawnShapes.Add(shape);
-        }
-
         public void LoadCurrentShape(int i)
         {
-            _currentShape = (IShape) _toolBar.ToolBarShapes[i].Clone();
+            _currentShape = (IShape) ToolBar.ToolBarShapes[i].Clone();
         }
 
         public void DeleteCurrentShapeFromToolBar(int i)
         {
             if (_currentShape != null)
             {
-                _toolBar.ToolBarShapes.RemoveAt(i);
+                ToolBar.ToolBarShapes.RemoveAt(i);
             }
             _currentShape = null;
             g.RefreshToolBar();
+            CreateMemento();
         }
 
         public void DrawCurrentShape(int x, int y)
@@ -65,20 +66,58 @@ namespace Archilog_Geom
                 if (_currentShape.GetType() == typeof(Rectangle))
                 {
                     Rectangle r = (Rectangle) _currentShape;
-                    _currentShape.SetX(x - r.Width/2);
-                    _currentShape.SetY(y - r.Height/2);
+                    _currentShape.X = (x - r.Width/2);
+                    _currentShape.Y = (y - r.Height/2);
                 }
                 else if (_currentShape.GetType() == typeof(Circle))
                 {
                     Circle c = (Circle) _currentShape;
-                    _currentShape.SetX(x - c.Diameter / 2);
-                    _currentShape.SetY(y - c.Diameter / 2);
+                    _currentShape.X = (x - c.Diameter / 2);
+                    _currentShape.Y = (y - c.Diameter / 2);
+                }
+                else if (_currentShape.GetType() == typeof(GroupShapes))
+                {
+                    GroupShapes group = (GroupShapes) _currentShape;
+                    foreach (var shape in group.Children)
+                    {
+                       ReplaceGroupOnDrawing(shape, x, y, group.X, group.XMax, group.Y, group.YMax);
+                    }
+                    _currentShape = group;
                 }
                 DrawnShapes.Add(_currentShape);
                 g.RefreshView();
             }
-
             _currentShape = null;
+            CreateMemento();
+        }
+
+        private void ReplaceGroupOnDrawing(IShape shape, int x, int y, int xMin, int xMax, int yMin, int yMax)
+        {
+            if (shape.GetType() == typeof(GroupShapes))
+            {
+                GroupShapes group = (GroupShapes) shape;
+                foreach (var child in group.Children)
+                {
+                    ReplaceGroupOnDrawing(child, x, y, xMin, xMax, yMin, yMax);
+                }
+            }
+            else
+            {
+                int width = xMax - xMin;
+                int height = yMax - yMin;
+                if (shape.GetType() == typeof(Circle))
+                {
+                    Circle c = (Circle)shape;
+                    shape.X = (x + c.X - xMin - width/2);
+                    shape.Y = (y + c.Y - yMin - height/2);
+                }
+                else if (shape.GetType() == typeof(Rectangle))
+                {
+                    Rectangle r = (Rectangle)shape;
+                    shape.X = (x + r.X - xMin - width/2);
+                    shape.Y = (y + r.Y - yMin - height/2);
+                }
+            }
         }
 
         public void AddRemoveSelectedShape(int x, int y)
@@ -137,11 +176,12 @@ namespace Archilog_Geom
             foreach (var shape in SelectedShapes)
             {
                 IShape toolBarNewShape = (IShape)shape.Clone();
-                _toolBar.ToolBarShapes.Add(toolBarNewShape);
+                ToolBar.ToolBarShapes.Add(toolBarNewShape);
             }
 
             ClickedOnSelectedShape = false;
             g.RefreshToolBar();
+            CreateMemento();
         }
 
         public void DeleteSelectedShapes()
@@ -151,6 +191,7 @@ namespace Archilog_Geom
             SelectedShapes.Clear();
             g.RefreshView();
             ClickedOnSelectedShape = false;
+            CreateMemento();
         }
 
         public void HandleRightClickMenuItemClick(int i)
@@ -173,9 +214,38 @@ namespace Archilog_Geom
             g.OpenGroupEditMenu(group);
         }
 
-        public void UpdateGroup(GroupShapes g, Color color)
+        public void UpdateGroup(GroupShapes group, Color color, int x, int y)
         {
-            g.SetColor(color);
+            group.Color = color;
+            foreach (var shape in group.Children)
+            {
+                ReplaceGroupOnEdition(shape, x, y, group.X, group.Y);
+            }
+            CreateMemento();
+        }
+
+        private void ReplaceGroupOnEdition(IShape shape, int x, int y, int xMin, int yMin)
+        {
+            if (shape.GetType() == typeof(GroupShapes))
+            {
+                GroupShapes group = (GroupShapes)shape;
+                foreach (var child in group.Children)
+                {
+                    ReplaceGroupOnEdition(child, x, y, xMin, yMin);
+                }
+            }
+            else if (shape.GetType() == typeof(Circle))
+            {
+                Circle c = (Circle)shape;
+                shape.X = (x + c.X - xMin);
+                shape.Y = (y + c.Y - yMin);
+            }
+            else if (shape.GetType() == typeof(Rectangle))
+            {
+                Rectangle r = (Rectangle)shape;
+                shape.X = (x + r.X - xMin);
+                shape.Y = (y + r.Y - yMin);
+            }
         }
 
         public void UpdateRectangle(Rectangle r, int x, int y, int width, int height, Color color)
@@ -184,7 +254,8 @@ namespace Archilog_Geom
             r.Y = y;
             r.Width = width;
             r.Height = height;
-            r.SetColor(color);
+            r.Color = color;
+            CreateMemento();
         }
 
         public void UpdateCircle(Circle c, int x, int y, int diameter, Color color)
@@ -192,7 +263,8 @@ namespace Archilog_Geom
             c.X = x;
             c.Y = y;
             c.Diameter = diameter;
-            c.SetColor(color);
+            c.Color = color;
+            CreateMemento();
         }
 
         public void EraseShape(IShape shape)
@@ -209,6 +281,7 @@ namespace Archilog_Geom
                 }
             }
             g.RefreshView();
+            CreateMemento();
         }
 
         public void CreateGroup(GroupShapes gr)
@@ -220,6 +293,7 @@ namespace Archilog_Geom
             }
             DrawnShapes.Add(gr);
             SelectedShapes.Add(gr);
+            CreateMemento();
         }
 
         public void DeleteGroup(GroupShapes gr)
@@ -234,6 +308,38 @@ namespace Archilog_Geom
                 SelectedShapes.Clear();
                 g.RefreshView();
             }
+            CreateMemento();
         }
+
+        private static void CreateMemento()
+        {
+            Memento save = new Memento();
+            save.SetState(DrawnShapes, ToolBar);
+            CareTaker.Instance.Add(save);
+        }
+
+        private void RestoreState(Memento newState)
+        {
+            DrawnShapes.Clear();
+            foreach (var shape in newState.DrawnShapes)
+            {
+                DrawnShapes.Add((IShape)shape.Clone());
+            }
+            ToolBar = (ToolBar)newState.ToolBar.Clone();
+            g.RefreshView();
+            g.RefreshToolBar();
+        }
+
+        public void Undo()
+        {
+            Memento newState = CareTaker.Instance.Undo();
+            RestoreState(newState);
+        }
+
+        public void Redo()
+        {
+            Memento newState = CareTaker.Instance.Redo();
+            RestoreState(newState);
+        }      
     }
 }

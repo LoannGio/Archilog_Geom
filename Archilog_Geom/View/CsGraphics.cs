@@ -2,31 +2,35 @@
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
+using System.Xml.Schema;
 using Archilog_Geom.View;
 
 namespace Archilog_Geom
 {
-    public class CsGraphics : Form, IObservableGraphics
+    public class CsGraphics : Form, IGraphics
     {
         private Panel _toolBarPanel;
         private Panel _drawingPanel;
         public Panel DrawingPanel => _drawingPanel;
         private Label label1;
-        private PictureBox garbage;
         private int toolbarItemHeight = 100;
+        private PictureBox garbage;
+        private Button undo;
+        private Button redo;
         private Pen selectedItemPen = new Pen(Color.Black);
 
         public CsGraphics()
         {
             InitializeComponent();
             InitializeToolBar();
-       
+            RefreshView();
+            RefreshToolBar();
         }
 
         public void InitializeToolBar()
         {
             _toolBarPanel.Controls.Clear();
-            var shapes = Mediator.Instance.ToolBar.ToolBarShapes;
+            var shapes = Mediator.ToolBar.ToolBarShapes;
             for (int i = 0; i < shapes.Count; i++)
             {
                 #region create the sub panel
@@ -39,7 +43,7 @@ namespace Archilog_Geom
 
                 #region draw shape on sub panel
                 Image img = new Bitmap(subPanel.Width, subPanel.Height);
-                drawShapeOnImage(img, shapes[i]);
+                DrawShapeOnImage(img, shapes[i]);
                 subPanel.BackgroundImage = img;
                 subPanel.MouseDown += new MouseEventHandler(this.subPanel_MouseDown);
                 subPanel.MouseUp += new MouseEventHandler(this.subPanel_MouseUp);
@@ -63,7 +67,7 @@ namespace Archilog_Geom
         public void OpenRightClickPopUp()
         {
             ContextMenu popUp = new ContextMenu();
-            foreach (var item in Mediator.Instance.RightClickPopUp.RightClickPopUpItems)
+            foreach (var item in Mediator.RightClickPopUp.RightClickPopUpItems)
             {
                 MenuItem mi = new MenuItem(item);
                 mi.Click += RightClickMenuItem_Click;
@@ -99,13 +103,11 @@ namespace Archilog_Geom
             Mediator.Instance.HandleRightClickMenuItemClick(((MenuItem)sender).Index);
         }
 
-        private void drawShapeOnImage(Image img, IShape shape)
+        private void DrawShapeOnImage(Image img, IShape shape)
         {
             Graphics g = Graphics.FromImage(img);
             g.SmoothingMode = SmoothingMode.AntiAlias;
             SolidBrush b;
-            int xMax = img.Width;
-            int yMax = img.Height;
 
             if (shape.GetType() == typeof(Rectangle))
             {
@@ -131,9 +133,60 @@ namespace Archilog_Geom
             else if (shape.GetType() == typeof(GroupShapes))
             {
                 GroupShapes group = (GroupShapes)shape;
-
-
+                DrawGroupOnImage(group, g, group.X, group.XMax, group.Y, group.YMax);
             }
+        }
+
+        private void DrawGroupOnImage(GroupShapes group, Graphics g, int xMin, int xMax, int yMin, int yMax)
+        {
+            g.SmoothingMode = SmoothingMode.AntiAlias;
+            SolidBrush b;
+            double ratioX = (double) _toolBarPanel.Width / (double) (xMax - xMin);
+            double ratioY = (double) toolbarItemHeight / (double) (yMax - yMin);
+            double ratio = Math.Min(ratioX, ratioY);
+            foreach (var shape in group.Children)
+            {
+                if (shape.GetType() == typeof(Rectangle))
+                {
+                    Rectangle rect = (Rectangle)shape;
+                    b = new SolidBrush(rect.Color);
+
+                    System.Drawing.Rectangle drawing_rect = new System.Drawing.Rectangle(rect.X, rect.Y, rect.Width, rect.Height);
+                    drawing_rect = ReplaceShapeInGroup(drawing_rect, ratio, xMin, yMin);
+                    g.FillRectangle(b, drawing_rect);
+                    
+                }
+                else if (shape.GetType() == typeof(Circle))
+                {
+                    Circle circle = (Circle)shape;
+                    b = new SolidBrush(circle.Color);
+
+                    System.Drawing.Rectangle drawing_rect = new System.Drawing.Rectangle(circle.X, circle.Y, circle.Diameter, circle.Diameter);
+                    drawing_rect = ReplaceShapeInGroup(drawing_rect, ratio, xMin, yMin);
+
+                    g.FillEllipse(b, drawing_rect.X, drawing_rect.Y, drawing_rect.Width, drawing_rect.Height);
+
+                }
+                else if (shape.GetType() == typeof(GroupShapes))
+                {
+                    DrawGroupOnImage((GroupShapes)shape, g, xMin, xMax, yMin, yMax);
+                }
+            }
+        }
+
+        private System.Drawing.Rectangle ReplaceShapeInGroup(System.Drawing.Rectangle drawingRect, double ratio, int xMin, int yMin)
+        {
+            double newX = (ratio * (drawingRect.X - xMin));
+            double newY = (ratio * (drawingRect.Y - yMin));
+            double newWidth = (ratio * drawingRect.Width);
+            double newHeight = (ratio * drawingRect.Height);
+
+            drawingRect.X = (int)newX;
+            drawingRect.Y = (int)newY;
+            drawingRect.Width = (int)newWidth;
+            drawingRect.Height = (int)newHeight;
+
+            return drawingRect;
         }
 
         private System.Drawing.Rectangle ReplaceShape(System.Drawing.Rectangle drawingRect)
@@ -195,7 +248,7 @@ namespace Archilog_Geom
                 if (ModifierKeys.HasFlag(Keys.Control))
                 {
                     Mediator.Instance.AddRemoveSelectedShape(e.X, e.Y);
-                    label1.Text = Mediator.Instance.SelectedShapes.Count.ToString();
+                    label1.Text = Mediator.SelectedShapes.Count.ToString();
                 }
                 else
                 {
@@ -217,7 +270,7 @@ namespace Archilog_Geom
                 int subPanelNumber = c.Top / toolbarItemHeight;
                 int mouseX = e.X + (_drawingPanel.Bounds.X - _toolBarPanel.Bounds.X);
                 int mouseY = e.Y + subPanelNumber * toolbarItemHeight + _drawingPanel.Bounds.Y;
-                if (Mediator.Instance.ClickedOnSelectedShape && _toolBarPanel.Bounds.Contains(mouseX, mouseY))
+                if (Mediator.ClickedOnSelectedShape && _toolBarPanel.Bounds.Contains(mouseX, mouseY))
                 {
                     Mediator.Instance.SaveShapesInToolbar();
                 }
@@ -227,7 +280,7 @@ namespace Archilog_Geom
 
                 mouseX = e.X + _drawingPanel.Bounds.X;
                 mouseY = e.Y + _drawingPanel.Bounds.Y;
-                if (Mediator.Instance.ClickedOnSelectedShape && garbage.Bounds.Contains(mouseX, mouseY))
+                if (Mediator.ClickedOnSelectedShape && garbage.Bounds.Contains(mouseX, mouseY))
                 {
                     Mediator.Instance.DeleteSelectedShapes();
                 }
@@ -238,7 +291,7 @@ namespace Archilog_Geom
         private void _drawingPanel_Paint(object sender, PaintEventArgs e)
         {
             e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
-            foreach (var shape in Mediator.Instance.DrawnShapes)
+            foreach (var shape in Mediator.DrawnShapes)
             {
                 PaintShape(e, shape);
             }
@@ -257,7 +310,7 @@ namespace Archilog_Geom
             }
             else if (shape.GetType() == typeof(GroupShapes))
             {
-                bool AmISelected = Mediator.Instance.SelectedShapes.Contains((GroupShapes)shape);
+                bool AmISelected = Mediator.SelectedShapes.Contains((GroupShapes)shape);
                 PaintGroupShapes(e, (GroupShapes)shape, AmISelected);
             }
         }
@@ -308,7 +361,7 @@ namespace Archilog_Geom
             SolidBrush brush;
             brush = new SolidBrush(rect.Color);
             e.Graphics.FillRectangle(brush, rect.X, rect.Y, rect.Width, rect.Height);
-            if (Mediator.Instance.SelectedShapes.Contains(rect))
+            if (Mediator.SelectedShapes.Contains(rect))
             {
                 e.Graphics.DrawRectangle(selectedItemPen, rect.X, rect.Y, rect.Width, rect.Height);
             }
@@ -319,19 +372,31 @@ namespace Archilog_Geom
             SolidBrush brush;
             brush = new SolidBrush(circle.Color);
             e.Graphics.FillEllipse(brush, circle.X, circle.Y, circle.Diameter, circle.Diameter);
-            if (Mediator.Instance.SelectedShapes.Contains(circle))
+            if (Mediator.SelectedShapes.Contains(circle))
             {
                 e.Graphics.DrawEllipse(selectedItemPen, circle.X, circle.Y, circle.Diameter, circle.Diameter);
             }
         }
 
+        private void undo_Click(object sender, EventArgs e)
+        {
+            Mediator.Instance.Undo();
+        }
+
+        private void redo_Click(object sender, EventArgs e)
+        {
+            Mediator.Instance.Redo();
+        }
 
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CsGraphics));
             this._drawingPanel = new System.Windows.Forms.Panel();
             this._toolBarPanel = new System.Windows.Forms.Panel();
             this.label1 = new System.Windows.Forms.Label();
             this.garbage = new System.Windows.Forms.PictureBox();
+            this.undo = new System.Windows.Forms.Button();
+            this.redo = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.garbage)).BeginInit();
             this.SuspendLayout();
             // 
@@ -378,9 +443,33 @@ namespace Archilog_Geom
             this.garbage.TabIndex = 4;
             this.garbage.TabStop = false;
             // 
+            // undo
+            // 
+            this.undo.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("undo.BackgroundImage")));
+            this.undo.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.undo.Location = new System.Drawing.Point(13, 2);
+            this.undo.Name = "undo";
+            this.undo.Size = new System.Drawing.Size(25, 23);
+            this.undo.TabIndex = 7;
+            this.undo.UseVisualStyleBackColor = true;
+            this.undo.Click += new System.EventHandler(this.undo_Click);
+            // 
+            // redo
+            // 
+            this.redo.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("redo.BackgroundImage")));
+            this.redo.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.redo.Location = new System.Drawing.Point(44, 2);
+            this.redo.Name = "redo";
+            this.redo.Size = new System.Drawing.Size(25, 23);
+            this.redo.TabIndex = 8;
+            this.redo.UseVisualStyleBackColor = true;
+            this.redo.Click += new System.EventHandler(this.redo_Click);
+            // 
             // CsGraphics
             // 
             this.ClientSize = new System.Drawing.Size(836, 493);
+            this.Controls.Add(this.redo);
+            this.Controls.Add(this.undo);
             this.Controls.Add(this.garbage);
             this.Controls.Add(this.label1);
             this.Controls.Add(this._toolBarPanel);

@@ -7,14 +7,12 @@ using System.Threading.Tasks;
 
 namespace Archilog_Geom
 {
-    public class Rectangle : AObservableShape
+    public class Rectangle : AShape
     {
         public int Width { get; set; }
         public int Height { get; set; }
         public int RotationAngle { get; set; }
         private Point rotationCenter;
-        private Color _color;
-        public Color Color => _color;
 
         public Rectangle(int x, int y, int width, int height, Color color)
         {
@@ -25,7 +23,7 @@ namespace Archilog_Geom
             RotationAngle = 0;
             rotationCenter.X = X + Width / 2;
             rotationCenter.Y = Y + Height / 2;
-            _color = color;
+            Color = color;
         }
 
         public override bool Contains(int x, int y)
@@ -38,11 +36,6 @@ namespace Archilog_Geom
         public override IRightClickPopUp CreateRightClickPopUp()
         {
            return new PopUpRectangle(this);
-        }
-
-        public override void SetColor(Color c)
-        {
-            _color = c;
         }
     }
 }

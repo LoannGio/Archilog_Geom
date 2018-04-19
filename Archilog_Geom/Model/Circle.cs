@@ -7,18 +7,16 @@ using System.Threading.Tasks;
 
 namespace Archilog_Geom
 {
-    public class Circle : AObservableShape
+    public class Circle : AShape
     {
         public int Diameter { get; set; }
-        private Color _color;
-        public Color Color => _color;
 
         public Circle(int x, int y, int diameter, Color color)
         {
             X = x;
             Y = y;
             Diameter = diameter;
-            _color = color;
+            Color = color;
         }
 
 
@@ -36,11 +34,6 @@ namespace Archilog_Geom
         public override IRightClickPopUp CreateRightClickPopUp()
         {
             return new PopUpCircle(this);
-        }
-
-        public override void SetColor(Color c)
-        {
-            _color = c;
         }
 
         private int EuclideanDistance(int x1, int y1, int x2, int y2)

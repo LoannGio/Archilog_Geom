@@ -7,14 +7,18 @@ using System.Threading.Tasks;
 
 namespace Archilog_Geom
 {
-    class ToolBar
+    public class ToolBar : ICloneable
     {
         public List<IShape> ToolBarShapes { get; } = new List<IShape>();
 
-        public ToolBar()
+        public object Clone()
         {
-            ToolBarShapes.Add(new Rectangle(10, 10, 50, 50, Color.LightGreen));
-            ToolBarShapes.Add(new Circle(20, 20, 100, Color.Red));
+            ToolBar clone = new ToolBar();
+            foreach (var shape in ToolBarShapes)
+            {
+                clone.ToolBarShapes.Add((IShape)shape.Clone());
+            }
+            return clone;
         }
     }
 }
