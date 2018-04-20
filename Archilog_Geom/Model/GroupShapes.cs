@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
 using System.Xml.Schema;
 
 namespace Archilog_Geom
@@ -59,6 +60,50 @@ namespace Archilog_Geom
         public override IRightClickPopUp CreateRightClickPopUp()
         {
             return new PopUpGroup(this);
+        }
+
+        public override XmlNode SerializeXml(XmlDocument doc)
+        {
+            XmlNode groupShapes = doc.CreateElement("GROUP");
+
+            foreach (var shape in Children)
+            {
+                groupShapes.AppendChild(shape.SerializeXml(doc));
+            }
+           
+            return groupShapes;
+        }
+
+        public override void XmlToShape(XmlNode node)
+        {
+            try
+            {
+                foreach (XmlNode shapeNode in node.ChildNodes)
+                {
+                    IShape shape = null;
+                    switch (shapeNode.Name)
+                    {
+                        case "CIRCLE":
+                            shape = new Circle();
+                            shape.XmlToShape(shapeNode);
+                            break;
+                        case "RECTANGLE":
+                            shape = new Rectangle();
+                            shape.XmlToShape(shapeNode);
+                            break;
+                        case "GROUP":
+                            shape = new GroupShapes();
+                            shape.XmlToShape(shapeNode);
+                            break;
+                    }
+                    if(shape != null)
+                        Add(shape);
+                }
+            }
+            catch (NullReferenceException)
+            {
+
+            }
         }
 
         private void UpdateBounds(GroupShapes group)

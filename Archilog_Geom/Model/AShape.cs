@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
 
 namespace Archilog_Geom
 {
@@ -24,5 +25,7 @@ namespace Archilog_Geom
 
         public abstract bool Contains(int x, int y);
         public abstract IRightClickPopUp CreateRightClickPopUp();
+        public abstract XmlNode SerializeXml(XmlDocument doc);
+        public abstract void XmlToShape(XmlNode node);
     }
 }

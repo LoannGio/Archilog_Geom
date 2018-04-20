@@ -12,11 +12,13 @@ namespace Archilog_Geom
         private Panel _toolBarPanel;
         private Panel _drawingPanel;
         public Panel DrawingPanel => _drawingPanel;
-        private Label label1;
         private int toolbarItemHeight = 100;
         private PictureBox garbage;
         private Button undo;
         private Button redo;
+        private Button import;
+        private Button export;
+        private Button clearAll;
         private Pen selectedItemPen = new Pen(Color.Black);
 
         public CsGraphics()
@@ -388,15 +390,45 @@ namespace Archilog_Geom
             Mediator.Instance.Redo();
         }
 
+        private void export_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog saveDialog = new SaveFileDialog();
+            DialogResult result = saveDialog.ShowDialog();
+            if (result == DialogResult.OK)
+                 Mediator.Instance.Export(saveDialog.FileName);
+        }
+
+        private void import_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog fileDialog = new OpenFileDialog();
+            DialogResult result = fileDialog.ShowDialog();
+            if (result == DialogResult.OK)
+                 Mediator.Instance.Import(fileDialog.FileName);
+        }
+
+
+        private void CsGraphics_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            Mediator.Instance.SaveBeforeAppClosure();
+        }
+
+
+        private void clearAll_Click(object sender, EventArgs e)
+        {
+            Mediator.Instance.ClearDrawingPanel();
+        }
+
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CsGraphics));
             this._drawingPanel = new System.Windows.Forms.Panel();
             this._toolBarPanel = new System.Windows.Forms.Panel();
-            this.label1 = new System.Windows.Forms.Label();
             this.garbage = new System.Windows.Forms.PictureBox();
             this.undo = new System.Windows.Forms.Button();
             this.redo = new System.Windows.Forms.Button();
+            this.import = new System.Windows.Forms.Button();
+            this.export = new System.Windows.Forms.Button();
+            this.clearAll = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.garbage)).BeginInit();
             this.SuspendLayout();
             // 
@@ -423,15 +455,6 @@ namespace Archilog_Geom
             this._toolBarPanel.Name = "_toolBarPanel";
             this._toolBarPanel.Size = new System.Drawing.Size(134, 459);
             this._toolBarPanel.TabIndex = 1;
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(465, 12);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(35, 13);
-            this.label1.TabIndex = 2;
-            this.label1.Text = "label1";
             // 
             // garbage
             // 
@@ -465,20 +488,55 @@ namespace Archilog_Geom
             this.redo.UseVisualStyleBackColor = true;
             this.redo.Click += new System.EventHandler(this.redo_Click);
             // 
+            // import
+            // 
+            this.import.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("import.BackgroundImage")));
+            this.import.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.import.Location = new System.Drawing.Point(122, 2);
+            this.import.Name = "import";
+            this.import.Size = new System.Drawing.Size(25, 23);
+            this.import.TabIndex = 9;
+            this.import.UseVisualStyleBackColor = true;
+            this.import.Click += new System.EventHandler(this.import_Click);
+            // 
+            // export
+            // 
+            this.export.BackColor = System.Drawing.SystemColors.Control;
+            this.export.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("export.BackgroundImage")));
+            this.export.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.export.Location = new System.Drawing.Point(91, 2);
+            this.export.Name = "export";
+            this.export.Size = new System.Drawing.Size(25, 23);
+            this.export.TabIndex = 10;
+            this.export.UseVisualStyleBackColor = false;
+            this.export.Click += new System.EventHandler(this.export_Click);
+            // 
+            // clearAll
+            // 
+            this.clearAll.Location = new System.Drawing.Point(252, 2);
+            this.clearAll.Name = "clearAll";
+            this.clearAll.Size = new System.Drawing.Size(75, 23);
+            this.clearAll.TabIndex = 11;
+            this.clearAll.Text = "Reinitialiser";
+            this.clearAll.UseVisualStyleBackColor = true;
+            this.clearAll.Click += new System.EventHandler(this.clearAll_Click);
+            // 
             // CsGraphics
             // 
             this.ClientSize = new System.Drawing.Size(836, 493);
+            this.Controls.Add(this.clearAll);
+            this.Controls.Add(this.export);
+            this.Controls.Add(this.import);
             this.Controls.Add(this.redo);
             this.Controls.Add(this.undo);
             this.Controls.Add(this.garbage);
-            this.Controls.Add(this.label1);
             this.Controls.Add(this._toolBarPanel);
             this.Controls.Add(this._drawingPanel);
             this.Name = "CsGraphics";
             this.Text = "Archilog Geom";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.CsGraphics_FormClosing);
             ((System.ComponentModel.ISupportInitialize)(this.garbage)).EndInit();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
     }

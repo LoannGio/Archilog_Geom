@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
 
 namespace Archilog_Geom
 {
@@ -15,5 +16,7 @@ namespace Archilog_Geom
         Color Color { get; set; }
         bool Contains(int x, int y);
         IRightClickPopUp CreateRightClickPopUp();
+        XmlNode SerializeXml(XmlDocument doc);
+        void XmlToShape(XmlNode node);
     }
 }

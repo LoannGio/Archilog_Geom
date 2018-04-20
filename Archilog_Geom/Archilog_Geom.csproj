@@ -48,6 +48,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controller\FileManager.cs" />
     <Compile Include="Model\AShape.cs" />
     <Compile Include="Model\ARightClickPopUp.cs" />
     <Compile Include="Controller\CareTaker.cs" />
@@ -122,11 +123,15 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="img\dustbin.png" />
+    <None Include="data\img\dustbin.png" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="img\redo_arrow.png" />
-    <Content Include="img\undo_arrow.png" />
+    <Content Include="data\img\load.png" />
+    <Content Include="data\img\redo_arrow.png" />
+    <Content Include="data\img\save.png" />
+    <Content Include="data\img\undo_arrow.png" />
+    <Content Include="data\init.xml" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

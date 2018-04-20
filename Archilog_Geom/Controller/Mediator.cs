@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Archilog_Geom.Controller;
 using Archilog_Geom.Model;
 
 namespace Archilog_Geom
@@ -32,15 +34,15 @@ namespace Archilog_Geom
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-
-            
-            ToolBar.ToolBarShapes.Add(new Rectangle(10, 10, 50, 50, Color.LightGreen));
-            ToolBar.ToolBarShapes.Add(new Circle(20, 20, 100, Color.Red));
-
+            ToolBar.InitFromFile("../../data/init.xml");
+            ToolBar.FillShapes();
             CreateMemento();
             g = new CsGraphics();
             Application.Run((Form) g);
-
+            azeaz
+                /*
+                 * TODO : TU globaux + refactor + attributs a la auber des objets + polygones reguliers 
+                 */
         }
 
         public void LoadCurrentShape(int i)
@@ -321,6 +323,7 @@ namespace Archilog_Geom
         private void RestoreState(Memento newState)
         {
             DrawnShapes.Clear();
+            SelectedShapes.Clear();
             foreach (var shape in newState.DrawnShapes)
             {
                 DrawnShapes.Add((IShape)shape.Clone());
@@ -340,6 +343,45 @@ namespace Archilog_Geom
         {
             Memento newState = CareTaker.Instance.Redo();
             RestoreState(newState);
-        }      
+        }
+
+        public void Export(string filename)
+        {
+            FileManager fm = new FileManager();
+            if (!filename.ToLower().EndsWith(".xml"))
+                filename += ".xml";
+            fm.Save(filename, CareTaker.Instance.GetCurrentMemento());
+        }
+
+        public void Import(string filename)
+        {
+            FileManager fm = new FileManager();
+            Memento mem = null;
+            if (filename.ToLower().EndsWith(".xml"))
+                mem = fm.Load(filename);
+            if (mem != null && mem != CareTaker.Instance.GetCurrentMemento())
+            {
+                CareTaker.Instance.ClearMementoes();
+                mem.ToolBar.FillShapes();
+                CareTaker.Instance.Add(mem);
+                RestoreState(mem);
+                g.RefreshView();
+                g.RefreshToolBar();
+            }
+        }
+
+        public void SaveBeforeAppClosure()
+        {
+            string path = "../../data/init.xml";
+            Export(path);
+        }
+
+        public void ClearDrawingPanel()
+        {
+            DrawnShapes.Clear();
+            SelectedShapes.Clear();
+            CreateMemento();
+            g.RefreshView();
+        }
     }
 }

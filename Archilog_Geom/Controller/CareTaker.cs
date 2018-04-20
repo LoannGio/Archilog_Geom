@@ -39,5 +39,16 @@ namespace Archilog_Geom.Model
                 _cursor++;
             return _listMementoes[_cursor];
         }
+
+        public Memento GetCurrentMemento()
+        {
+            return _listMementoes[_cursor];
+        }
+
+        public void ClearMementoes()
+        {
+            _cursor = -1;
+            _listMementoes.Clear();
+        }
     }
 }
