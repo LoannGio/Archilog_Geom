@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
+using Archilog_Geom.Controller;
 
 namespace Archilog_Geom
 {
@@ -92,6 +93,11 @@ namespace Archilog_Geom
             {
 
             }
+        }
+
+        public override void Accept(IShapeVisitor v)
+        {
+            v.VisitRectangle(this);
         }
     }
 }

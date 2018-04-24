@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
+using Archilog_Geom.Controller;
 
 namespace Archilog_Geom
 {
@@ -27,5 +28,6 @@ namespace Archilog_Geom
         public abstract IRightClickPopUp CreateRightClickPopUp();
         public abstract XmlNode SerializeXml(XmlDocument doc);
         public abstract void XmlToShape(XmlNode node);
+        public abstract void Accept(IShapeVisitor v);
     }
 }

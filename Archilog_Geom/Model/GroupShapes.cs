@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Schema;
+using Archilog_Geom.Controller;
 
 namespace Archilog_Geom
 {
@@ -44,8 +45,21 @@ namespace Archilog_Geom
         public void Add(IShape shape)
         {
             _children.Add(shape);
-            UpdateBounds(this);
+            UpdateBounds();
             _color = shape.Color;
+        }
+
+        public bool ContainsRecurs(IShape shape)
+        {
+            bool isContained = false;
+            if (Children.Contains(shape))
+                isContained = true;
+            else
+                foreach (var child in Children.Where(c => c.GetType() == typeof(GroupShapes)))
+                    if (((GroupShapes) child).ContainsRecurs(shape))
+                        isContained = true;
+
+            return isContained;
         }
 
         public override bool Contains(int x, int y)
@@ -108,13 +122,22 @@ namespace Archilog_Geom
             }
         }
 
-        private void UpdateBounds(GroupShapes group)
+        public override void Accept(IShapeVisitor v)
         {
-            foreach (var shape in group.Children)
+            v.VisitGroup(this);
+        }
+
+        public void UpdateBounds()
+        {
+            X = int.MaxValue;
+            Y = int.MaxValue;
+            XMax = int.MinValue;
+            YMax = int.MinValue;
+            foreach (var shape in Children)
             {
                 if (shape.GetType() == typeof(GroupShapes))
                 {
-                    UpdateBounds((GroupShapes)shape);
+                    ((GroupShapes)shape).UpdateBounds();
                 }
                 else if (shape.GetType() == typeof(Circle))
                 {

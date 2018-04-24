@@ -49,6 +49,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controller\FileManager.cs" />
+    <Compile Include="Controller\IShapeVisitor.cs" />
+    <Compile Include="Controller\ReplaceShape.cs" />
+    <Compile Include="Controller\UpdateShape.cs" />
+    <Compile Include="View\CsGraphicsDrawShape.cs" />
     <Compile Include="Model\AShape.cs" />
     <Compile Include="Model\ARightClickPopUp.cs" />
     <Compile Include="Controller\CareTaker.cs" />

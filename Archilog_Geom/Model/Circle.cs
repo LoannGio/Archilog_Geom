@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
+using Archilog_Geom.Controller;
 
 namespace Archilog_Geom
 {
@@ -83,6 +84,11 @@ namespace Archilog_Geom
             {
 
             }
+        }
+
+        public override void Accept(IShapeVisitor v)
+        {
+            v.VisitCircle(this);
         }
 
         private int EuclideanDistance(int x1, int y1, int x2, int y2)

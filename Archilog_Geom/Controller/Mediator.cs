@@ -81,6 +81,7 @@ namespace Archilog_Geom
                     {
                        ReplaceGroupOnDrawing(shape, x, y, group.X, group.XMax, group.Y, group.YMax);
                     }
+                    group.UpdateBounds();
                     _currentShape = group;
                 }
                 DrawnShapes.Add(_currentShape);
@@ -99,6 +100,7 @@ namespace Archilog_Geom
                 {
                     ReplaceGroupOnDrawing(child, x, y, xMin, xMax, yMin, yMax);
                 }
+                group.UpdateBounds();
             }
             else
             {
@@ -215,54 +217,19 @@ namespace Archilog_Geom
 
         public void UpdateGroup(GroupShapes group, Color color, int x, int y)
         {
-            group.Color = color;
-            foreach (var shape in group.Children)
-            {
-                ReplaceGroupOnEdition(shape, x, y, group.X, group.Y);
-            }
+            group.Accept(new UpdateShape(x, y, color));
             CreateMemento();
-        }
-
-        private void ReplaceGroupOnEdition(IShape shape, int x, int y, int xMin, int yMin)
-        {
-            if (shape.GetType() == typeof(GroupShapes))
-            {
-                GroupShapes group = (GroupShapes)shape;
-                foreach (var child in group.Children)
-                {
-                    ReplaceGroupOnEdition(child, x, y, xMin, yMin);
-                }
-            }
-            else if (shape.GetType() == typeof(Circle))
-            {
-                Circle c = (Circle)shape;
-                shape.X = (x + c.X - xMin);
-                shape.Y = (y + c.Y - yMin);
-            }
-            else if (shape.GetType() == typeof(Rectangle))
-            {
-                Rectangle r = (Rectangle)shape;
-                shape.X = (x + r.X - xMin);
-                shape.Y = (y + r.Y - yMin);
-            }
         }
 
         public void UpdateRectangle(Rectangle r, int x, int y, int width, int height, Color color)
         {
-            r.X = x;
-            r.Y = y;
-            r.Width = width;
-            r.Height = height;
-            r.Color = color;
+            r.Accept(new UpdateShape(x, y, width, height, color));
             CreateMemento();
         }
 
         public void UpdateCircle(Circle c, int x, int y, int diameter, Color color)
         {
-            c.X = x;
-            c.Y = y;
-            c.Diameter = diameter;
-            c.Color = color;
+            c.Accept(new UpdateShape(x, y, diameter, color));
             CreateMemento();
         }
 
@@ -379,6 +346,13 @@ namespace Archilog_Geom
             SelectedShapes.Clear();
             CreateMemento();
             g.RefreshView();
+        }
+
+        private void Update(IShape shape)
+        {
+            foreach (var child in DrawnShapes.Where(c => c.GetType() == typeof(GroupShapes)))
+              if(((GroupShapes)child).ContainsRecurs(shape))
+                  ((GroupShapes)child).UpdateBounds();
         }
     }
 }
