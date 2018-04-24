@@ -14,7 +14,7 @@ namespace Archilog_Geom
 
         protected ARightClickPopUp()
         {
-            RightClickPopUpItems.Add("Edit");
+            RightClickPopUpItems.Add("Editer");
             RightClickPopUpItems.Add("Supprimer");
         }
 

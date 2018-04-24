@@ -250,7 +250,6 @@ namespace Archilog_Geom
                 if (ModifierKeys.HasFlag(Keys.Control))
                 {
                     Mediator.Instance.AddRemoveSelectedShape(e.X, e.Y);
-                    label1.Text = Mediator.SelectedShapes.Count.ToString();
                 }
                 else
                 {

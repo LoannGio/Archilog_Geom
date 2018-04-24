@@ -11,8 +11,8 @@ namespace Archilog_Geom
         public PopUpGroup(GroupShapes g)
         {
             myShape = g;
-            RightClickPopUpItems.Insert(1, "Degroup");
-            RightClickPopUpItems.Insert(1, "Group");
+            RightClickPopUpItems.Insert(1, "Degrouper");
+            RightClickPopUpItems.Insert(1, "Grouper");
         }
 
         public override void Edit()

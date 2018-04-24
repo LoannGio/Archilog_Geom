@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -11,7 +12,8 @@ namespace Archilog_Geom
 {
     public class GroupShapes : AShape
     {
-        public List<IShape> Children { get; } = new List<IShape>();
+        private List<IShape> _children = new List<IShape>();
+        public ReadOnlyCollection<IShape> Children => _children.AsReadOnly();
 
         public int XMax { get; set; }
         public int YMax { get; set; }
@@ -23,7 +25,7 @@ namespace Archilog_Geom
             set
             {
                 _color = value;
-                foreach (var child in Children)
+                foreach (var child in _children)
                 {
                     child.Color = value;
                 }
@@ -41,14 +43,14 @@ namespace Archilog_Geom
 
         public void Add(IShape shape)
         {
-            Children.Add(shape);
+            _children.Add(shape);
             UpdateBounds(this);
             _color = shape.Color;
         }
 
         public override bool Contains(int x, int y)
         {
-            foreach (var shape in Children)
+            foreach (var shape in _children)
             {
                 if (shape.Contains(x, y))
                     return true;
@@ -66,7 +68,7 @@ namespace Archilog_Geom
         {
             XmlNode groupShapes = doc.CreateElement("GROUP");
 
-            foreach (var shape in Children)
+            foreach (var shape in _children)
             {
                 groupShapes.AppendChild(shape.SerializeXml(doc));
             }
@@ -143,7 +145,7 @@ namespace Archilog_Geom
         public override object Clone()
         {
             GroupShapes clone = new GroupShapes();
-            foreach (var child in Children)
+            foreach (var child in _children)
             {
                 clone.Add((IShape)child.Clone());
             }

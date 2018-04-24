@@ -25,6 +25,7 @@ namespace Archilog_Geom
         private static IRightClickPopUp _rightClickPopUp = null;
         public static IRightClickPopUp RightClickPopUp => _rightClickPopUp;
 
+        //default graphic lib
         private static IGraphics g;
         
         private Mediator() { }
@@ -39,10 +40,6 @@ namespace Archilog_Geom
             CreateMemento();
             g = new CsGraphics();
             Application.Run((Form) g);
-            azeaz
-                /*
-                 * TODO : TU globaux + refactor + attributs a la auber des objets + polygones reguliers 
-                 */
         }
 
         public void LoadCurrentShape(int i)
