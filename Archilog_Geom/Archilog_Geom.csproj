@@ -141,7 +141,9 @@
     <Content Include="data\img\redo_arrow.png" />
     <Content Include="data\img\save.png" />
     <Content Include="data\img\undo_arrow.png" />
-    <Content Include="data\init.xml" />
+    <Content Include="data\init.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="main_icon.ico" />
   </ItemGroup>
   <ItemGroup />

@@ -46,7 +46,7 @@ namespace Archilog_Geom.Model
             var doc = new XmlDocument();
             try
             {
-                doc.Load("../../data/init.xml");
+                doc.Load(filename);
 
                 _toolBarShapes = fm.LoadToolBar(doc.DocumentElement.FirstChild)._toolBarShapes;
             }

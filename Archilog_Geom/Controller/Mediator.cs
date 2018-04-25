@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Archilog_Geom.Model;
+using Archilog_Geom.View;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using Archilog_Geom.Model;
-using Archilog_Geom.View;
 using Rectangle = Archilog_Geom.Model.Rectangle;
 using ToolBar = Archilog_Geom.Model.ToolBar;
 
@@ -24,6 +24,8 @@ namespace Archilog_Geom.Controller
 
         public IRightClickPopUp RightClickPopUp { get; private set; }
 
+        private readonly string _initFilePath = Environment.CurrentDirectory + "\\data\\init.xml";
+
         //default graphic lib
         private static IGraphics _g;
         
@@ -35,7 +37,7 @@ namespace Archilog_Geom.Controller
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            Instance.ToolBar.InitFromFile("../../data/init.xml");
+            Instance.ToolBar.InitFromFile(Instance._initFilePath);
             Instance.ToolBar.FillShapes();
             Instance.CreateMemento();
 
@@ -90,7 +92,7 @@ namespace Archilog_Geom.Controller
 
         public void DrawingPanelLeftMouseButtonPressed(int mouseX, int mouseY)
         {
-            var shape = SelectedShapes.First(s => s.Contains(mouseX, mouseY));
+            var shape = SelectedShapes.FirstOrDefault(s => s.Contains(mouseX, mouseY));
             if (shape != null)
             {
                 ClickedOnSelectedShape = true;
@@ -274,8 +276,7 @@ namespace Archilog_Geom.Controller
 
         public void SaveBeforeAppClosure()
         {
-            var path = "../../data/init.xml";
-            Export(path);
+            Export(_initFilePath);
         }
 
         public void ClearDrawingPanel()

@@ -88,12 +88,12 @@ namespace Archilog_Geom.Tests
             Assert.AreEqual(reference, CareTaker.Instance.GetCurrentMemento());
 
             //Undo a rectangle's update
-            Mediator.Instance.UpdateRectangle((Rectangle)Mediator.Instance.DrawnShapes.First(s => s.GetType() == typeof(Rectangle)), 200, 200, 100, 100, Color.Blue);
+            Mediator.Instance.UpdateRectangle((Rectangle)Mediator.Instance.DrawnShapes.FirstOrDefault(s => s.GetType() == typeof(Rectangle)), 200, 200, 100, 100, Color.Blue);
             Mediator.Instance.Undo();
             Assert.AreEqual(reference, CareTaker.Instance.GetCurrentMemento());
 
             //Undo a circle's update
-            Mediator.Instance.UpdateCircle((Circle)Mediator.Instance.DrawnShapes.First(s => s.GetType() == typeof(Circle)), 200, 200, 100, Color.Blue);
+            Mediator.Instance.UpdateCircle((Circle)Mediator.Instance.DrawnShapes.FirstOrDefault(s => s.GetType() == typeof(Circle)), 200, 200, 100, Color.Blue);
             Mediator.Instance.Undo();
             Assert.AreEqual(reference, CareTaker.Instance.GetCurrentMemento());
 
@@ -171,7 +171,7 @@ namespace Archilog_Geom.Tests
             Mediator.Instance.Undo();
 
             //Redo a rectangle's update
-            Mediator.Instance.UpdateRectangle((Rectangle)Mediator.Instance.DrawnShapes.First(s => s.GetType() == typeof(Rectangle)), 200, 200, 100, 100, Color.Blue);
+            Mediator.Instance.UpdateRectangle((Rectangle)Mediator.Instance.DrawnShapes.FirstOrDefault(s => s.GetType() == typeof(Rectangle)), 200, 200, 100, 100, Color.Blue);
             tmpReference = CareTaker.Instance.GetCurrentMemento();
             Mediator.Instance.Undo();
             Mediator.Instance.Redo();
@@ -179,7 +179,7 @@ namespace Archilog_Geom.Tests
             Mediator.Instance.Undo();
 
             //Redo a circle's update
-            Mediator.Instance.UpdateCircle((Circle)Mediator.Instance.DrawnShapes.First(s => s.GetType() == typeof(Circle)), 200, 200, 100, Color.Blue);
+            Mediator.Instance.UpdateCircle((Circle)Mediator.Instance.DrawnShapes.FirstOrDefault(s => s.GetType() == typeof(Circle)), 200, 200, 100, Color.Blue);
             tmpReference = CareTaker.Instance.GetCurrentMemento();
             Mediator.Instance.Undo();
             Mediator.Instance.Redo();
