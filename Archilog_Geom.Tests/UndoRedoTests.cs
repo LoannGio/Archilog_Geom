@@ -3,8 +3,11 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Reflection;
+using Archilog_Geom.Controller;
 using Archilog_Geom.Model;
+using Archilog_Geom.View;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Rectangle = Archilog_Geom.Model.Rectangle;
 
 namespace Archilog_Geom.Tests
 {
@@ -23,10 +26,10 @@ namespace Archilog_Geom.Tests
             IShape rect = new Rectangle();
 
             IGraphics ig = new CsGraphics();
-            Mediator m = Mediator.Instance;
-            m.GetType().GetField("g", BindingFlags.NonPublic| BindingFlags.Instance | BindingFlags.Static).SetValue(m, ig);
-            Mediator.ToolBar._toolBarShapes.Add(circle);
-            Mediator.ToolBar._toolBarShapes.Add(rect);
+            var m = Mediator.Instance;
+            m.GetType().GetField("_g", BindingFlags.NonPublic| BindingFlags.Instance | BindingFlags.Static).SetValue(m, ig);
+            Mediator.Instance.ToolBar.Add(circle);
+            Mediator.Instance.ToolBar.Add(rect);
             Mediator.Instance.LoadCurrentShape(0);
             Mediator.Instance.DrawCurrentShape(50, 50);
             Mediator.Instance.LoadCurrentShape(1);
@@ -35,8 +38,8 @@ namespace Archilog_Geom.Tests
             Mediator.Instance.DrawCurrentShape(150, 150);
             Mediator.Instance.LoadCurrentShape(1);
             Mediator.Instance.DrawCurrentShape(200, 200);
-            Mediator.Instance.AddRemoveSelectedShape(Mediator.DrawnShapes[2].X, Mediator.DrawnShapes[2].Y);
-            Mediator.Instance.AddRemoveSelectedShape(Mediator.DrawnShapes[3].X, Mediator.DrawnShapes[3].Y);
+            Mediator.Instance.AddRemoveSelectedShape(Mediator.Instance.DrawnShapes[2].X, Mediator.Instance.DrawnShapes[2].Y);
+            Mediator.Instance.AddRemoveSelectedShape(Mediator.Instance.DrawnShapes[3].X, Mediator.Instance.DrawnShapes[3].Y);
 
             /*There, we have :
              Toolbar : 1 circle, 1 rect
@@ -66,38 +69,38 @@ namespace Archilog_Geom.Tests
             Assert.AreEqual(reference, CareTaker.Instance.GetCurrentMemento());
 
             //Undo a shape's deletion
-            Mediator.Instance.AddRemoveSelectedShape(Mediator.DrawnShapes[0].X, Mediator.DrawnShapes[0].Y);
+            Mediator.Instance.AddRemoveSelectedShape(Mediator.Instance.DrawnShapes[0].X, Mediator.Instance.DrawnShapes[0].Y);
             Mediator.Instance.DeleteSelectedShapes();
             Mediator.Instance.Undo();
             Assert.AreEqual(reference, CareTaker.Instance.GetCurrentMemento());
 
             //Undo a toolbar item save
-            Mediator.Instance.AddRemoveSelectedShape(Mediator.DrawnShapes[0].X, Mediator.DrawnShapes[0].Y);
+            Mediator.Instance.AddRemoveSelectedShape(Mediator.Instance.DrawnShapes[0].X, Mediator.Instance.DrawnShapes[0].Y);
             Mediator.Instance.SaveShapesInToolbar();
             Mediator.Instance.Undo();
             Assert.AreEqual(reference, CareTaker.Instance.GetCurrentMemento());
 
             //Undo a toolbar item delete
-            int currentShapeIndex = 0;
+            var currentShapeIndex = 0;
             Mediator.Instance.LoadCurrentShape(currentShapeIndex);
             Mediator.Instance.DeleteCurrentShapeFromToolBar(currentShapeIndex);
             Mediator.Instance.Undo();
             Assert.AreEqual(reference, CareTaker.Instance.GetCurrentMemento());
 
             //Undo a rectangle's update
-            Mediator.Instance.UpdateRectangle((Rectangle)Mediator.DrawnShapes.First(s => s.GetType() == typeof(Rectangle)), 200, 200, 100, 100, Color.Blue);
+            Mediator.Instance.UpdateRectangle((Rectangle)Mediator.Instance.DrawnShapes.First(s => s.GetType() == typeof(Rectangle)), 200, 200, 100, 100, Color.Blue);
             Mediator.Instance.Undo();
             Assert.AreEqual(reference, CareTaker.Instance.GetCurrentMemento());
 
             //Undo a circle's update
-            Mediator.Instance.UpdateCircle((Circle)Mediator.DrawnShapes.First(s => s.GetType() == typeof(Circle)), 200, 200, 100, Color.Blue);
+            Mediator.Instance.UpdateCircle((Circle)Mediator.Instance.DrawnShapes.First(s => s.GetType() == typeof(Circle)), 200, 200, 100, Color.Blue);
             Mediator.Instance.Undo();
             Assert.AreEqual(reference, CareTaker.Instance.GetCurrentMemento());
 
             //Undo a group's update
             group = new GroupShapes();
-            ((GroupShapes)group).Add(Mediator.DrawnShapes[2]);
-            ((GroupShapes)group).Add(Mediator.DrawnShapes[3]);
+            ((GroupShapes)group).Add(Mediator.Instance.DrawnShapes[2]);
+            ((GroupShapes)group).Add(Mediator.Instance.DrawnShapes[3]);
             Mediator.Instance.CreateGroup((GroupShapes)group);
             tmpReference = CareTaker.Instance.GetCurrentMemento();
             Mediator.Instance.UpdateGroup((GroupShapes)group, Color.Blue, 200, 200);
@@ -107,16 +110,16 @@ namespace Archilog_Geom.Tests
 
             //Undo a shapes groupage
             group = new GroupShapes();
-            ((GroupShapes)group).Add(Mediator.DrawnShapes[2]);
-            ((GroupShapes)group).Add(Mediator.DrawnShapes[3]);
+            ((GroupShapes)group).Add(Mediator.Instance.DrawnShapes[2]);
+            ((GroupShapes)group).Add(Mediator.Instance.DrawnShapes[3]);
             Mediator.Instance.CreateGroup((GroupShapes)group);
             Mediator.Instance.Undo();
             Assert.AreEqual(reference, CareTaker.Instance.GetCurrentMemento());
 
             //Undo a shapes ungroupage
             group = new GroupShapes();
-            ((GroupShapes)group).Add(Mediator.DrawnShapes[2]);
-            ((GroupShapes)group).Add(Mediator.DrawnShapes[3]);
+            ((GroupShapes)group).Add(Mediator.Instance.DrawnShapes[2]);
+            ((GroupShapes)group).Add(Mediator.Instance.DrawnShapes[3]);
             Mediator.Instance.CreateGroup((GroupShapes)group);
             tmpReference = CareTaker.Instance.GetCurrentMemento();
             Mediator.Instance.DeleteGroup((GroupShapes)group);
@@ -140,7 +143,7 @@ namespace Archilog_Geom.Tests
             Mediator.Instance.Undo();
 
             //Redo a shape's deletion
-            Mediator.Instance.AddRemoveSelectedShape(Mediator.DrawnShapes[0].X, Mediator.DrawnShapes[0].Y);
+            Mediator.Instance.AddRemoveSelectedShape(Mediator.Instance.DrawnShapes[0].X, Mediator.Instance.DrawnShapes[0].Y);
             Mediator.Instance.DeleteSelectedShapes();
             tmpReference = CareTaker.Instance.GetCurrentMemento();
             Mediator.Instance.Undo();
@@ -149,7 +152,7 @@ namespace Archilog_Geom.Tests
             Mediator.Instance.Undo();
 
             //Redo a toolbar item save
-            Mediator.Instance.AddRemoveSelectedShape(Mediator.DrawnShapes[0].X, Mediator.DrawnShapes[0].Y);
+            Mediator.Instance.AddRemoveSelectedShape(Mediator.Instance.DrawnShapes[0].X, Mediator.Instance.DrawnShapes[0].Y);
             Mediator.Instance.SaveShapesInToolbar();
             tmpReference = CareTaker.Instance.GetCurrentMemento();
             Mediator.Instance.Undo();
@@ -158,7 +161,7 @@ namespace Archilog_Geom.Tests
             Mediator.Instance.Undo();
 
             //Redo a toolbar item delete
-            int currentShapeIndex = 0;
+            var currentShapeIndex = 0;
             Mediator.Instance.LoadCurrentShape(currentShapeIndex);
             Mediator.Instance.DeleteCurrentShapeFromToolBar(currentShapeIndex);
             tmpReference = CareTaker.Instance.GetCurrentMemento();
@@ -168,7 +171,7 @@ namespace Archilog_Geom.Tests
             Mediator.Instance.Undo();
 
             //Redo a rectangle's update
-            Mediator.Instance.UpdateRectangle((Rectangle)Mediator.DrawnShapes.First(s => s.GetType() == typeof(Rectangle)), 200, 200, 100, 100, Color.Blue);
+            Mediator.Instance.UpdateRectangle((Rectangle)Mediator.Instance.DrawnShapes.First(s => s.GetType() == typeof(Rectangle)), 200, 200, 100, 100, Color.Blue);
             tmpReference = CareTaker.Instance.GetCurrentMemento();
             Mediator.Instance.Undo();
             Mediator.Instance.Redo();
@@ -176,7 +179,7 @@ namespace Archilog_Geom.Tests
             Mediator.Instance.Undo();
 
             //Redo a circle's update
-            Mediator.Instance.UpdateCircle((Circle)Mediator.DrawnShapes.First(s => s.GetType() == typeof(Circle)), 200, 200, 100, Color.Blue);
+            Mediator.Instance.UpdateCircle((Circle)Mediator.Instance.DrawnShapes.First(s => s.GetType() == typeof(Circle)), 200, 200, 100, Color.Blue);
             tmpReference = CareTaker.Instance.GetCurrentMemento();
             Mediator.Instance.Undo();
             Mediator.Instance.Redo();
@@ -185,8 +188,8 @@ namespace Archilog_Geom.Tests
 
             //Redo a group's update
             group = new GroupShapes();
-            ((GroupShapes)group).Add(Mediator.DrawnShapes[2]);
-            ((GroupShapes)group).Add(Mediator.DrawnShapes[3]);
+            ((GroupShapes)group).Add(Mediator.Instance.DrawnShapes[2]);
+            ((GroupShapes)group).Add(Mediator.Instance.DrawnShapes[3]);
             Mediator.Instance.CreateGroup((GroupShapes)group);
             Mediator.Instance.UpdateGroup((GroupShapes)group, Color.Blue, 200, 200);
             tmpReference = CareTaker.Instance.GetCurrentMemento();
@@ -198,8 +201,8 @@ namespace Archilog_Geom.Tests
 
             //Redo a shapes groupage
             group = new GroupShapes();
-            ((GroupShapes)group).Add(Mediator.DrawnShapes[2]);
-            ((GroupShapes)group).Add(Mediator.DrawnShapes[3]);
+            ((GroupShapes)group).Add(Mediator.Instance.DrawnShapes[2]);
+            ((GroupShapes)group).Add(Mediator.Instance.DrawnShapes[3]);
             Mediator.Instance.CreateGroup((GroupShapes)group);
             tmpReference = CareTaker.Instance.GetCurrentMemento();
             Mediator.Instance.Undo();
@@ -209,8 +212,8 @@ namespace Archilog_Geom.Tests
 
             //Redo a shapes ungroupage
             group = new GroupShapes();
-            ((GroupShapes)group).Add(Mediator.DrawnShapes[2]);
-            ((GroupShapes)group).Add(Mediator.DrawnShapes[3]);
+            ((GroupShapes)group).Add(Mediator.Instance.DrawnShapes[2]);
+            ((GroupShapes)group).Add(Mediator.Instance.DrawnShapes[3]);
             Mediator.Instance.CreateGroup((GroupShapes)group);
             Mediator.Instance.DeleteGroup((GroupShapes)group);
             tmpReference = CareTaker.Instance.GetCurrentMemento();
@@ -227,7 +230,7 @@ namespace Archilog_Geom.Tests
             Mediator.Instance.DrawCurrentShape(200, 200);
             Mediator.Instance.Undo();
             Mediator.Instance.Undo();
-            Mediator.Instance.AddRemoveSelectedShape(Mediator.DrawnShapes[0].X, Mediator.DrawnShapes[0].Y);
+            Mediator.Instance.AddRemoveSelectedShape(Mediator.Instance.DrawnShapes[0].X, Mediator.Instance.DrawnShapes[0].Y);
             Mediator.Instance.SaveShapesInToolbar();
             tmpReference = CareTaker.Instance.GetCurrentMemento();
             Mediator.Instance.Redo(); //fails, there's no memento to redo

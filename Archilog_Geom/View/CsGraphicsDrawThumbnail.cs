@@ -1,35 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Archilog_Geom.Controller;
+using Archilog_Geom.Model;
+using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Archilog_Geom.Controller;
+using Rectangle = Archilog_Geom.Model.Rectangle;
 
 namespace Archilog_Geom.View
 {
     class CsGraphicsDrawThumbnail : IShapeVisitor
     {
-
-        private Image _img;
-        private Graphics g;
-        private int _panelWidth;
-        private int _panelHeight;
+      
+        private readonly Graphics g;
+        private readonly int _panelWidth;
+        private readonly int _panelHeight;
         private System.Drawing.Rectangle _drawingRect;
 
         public CsGraphicsDrawThumbnail(Image img, int panelWidth, int panelHeight)
         {
-            _img = img;
             _panelWidth = panelWidth;
             _panelHeight = panelHeight;
-            g = Graphics.FromImage(_img);
+            g = Graphics.FromImage(img);
             g.SmoothingMode = SmoothingMode.AntiAlias;
         }
 
         public void VisitCircle(Circle circle)
         {
-            SolidBrush b = new SolidBrush(circle.Color);
+            var b = new SolidBrush(circle.Color);
 
             _drawingRect = new System.Drawing.Rectangle(circle.X, circle.Y, circle.Diameter, circle.Diameter);
             _drawingRect = ReplaceShape(_drawingRect);
@@ -39,7 +35,7 @@ namespace Archilog_Geom.View
 
         public void VisitRectangle(Rectangle rect)
         {
-            SolidBrush b = new SolidBrush(rect.Color);
+            var b = new SolidBrush(rect.Color);
 
             _drawingRect = new System.Drawing.Rectangle(rect.X, rect.Y, rect.Width, rect.Height);
             _drawingRect = ReplaceShape(_drawingRect);
@@ -49,11 +45,11 @@ namespace Archilog_Geom.View
 
         public void VisitGroup(GroupShapes group)
         {
-            double ratioX = (double)_panelWidth / (double)(group.XMax - group.X);
-            double ratioY = (double)_panelHeight / (double)(group.YMax - group.Y);
-            double ratio = Math.Min(ratioX, ratioY);
-            int x = group.X;
-            int y = group.Y;
+            var ratioX = (double)_panelWidth / (double)(group.XMax - group.X);
+            var ratioY = (double)_panelHeight / (double)(group.YMax - group.Y);
+            var ratio = Math.Min(ratioX, ratioY);
+            var x = group.X;
+            var y = group.Y;
 
             foreach (var shape in group.Children)
             {
@@ -66,7 +62,7 @@ namespace Archilog_Geom.View
             SolidBrush b;
             if (shape.GetType() == typeof(Rectangle))
             {
-                Rectangle rect = (Rectangle)shape;
+                var rect = (Rectangle)shape;
                 b = new SolidBrush(rect.Color);
 
                 _drawingRect = new System.Drawing.Rectangle(rect.X, rect.Y, rect.Width, rect.Height);
@@ -76,7 +72,7 @@ namespace Archilog_Geom.View
             }
             else if (shape.GetType() == typeof(Circle))
             {
-                Circle circle = (Circle)shape;
+                var circle = (Circle)shape;
                 b = new SolidBrush(circle.Color);
 
                 _drawingRect = new System.Drawing.Rectangle(circle.X, circle.Y, circle.Diameter, circle.Diameter);
@@ -96,10 +92,10 @@ namespace Archilog_Geom.View
 
         private System.Drawing.Rectangle ReplaceShapeInGroup(System.Drawing.Rectangle drawingRect, double ratio, int xMin, int yMin)
         {
-            double newX = (ratio * (drawingRect.X - xMin));
-            double newY = (ratio * (drawingRect.Y - yMin));
-            double newWidth = (ratio * drawingRect.Width);
-            double newHeight = (ratio * drawingRect.Height);
+            var newX = (ratio * (drawingRect.X - xMin));
+            var newY = (ratio * (drawingRect.Y - yMin));
+            var newWidth = (ratio * drawingRect.Width);
+            var newHeight = (ratio * drawingRect.Height);
 
             drawingRect.X = (int)newX;
             drawingRect.Y = (int)newY;

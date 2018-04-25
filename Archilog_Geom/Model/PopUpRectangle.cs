@@ -1,16 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Archilog_Geom
+﻿namespace Archilog_Geom.Model
 {
     class PopUpRectangle : ARightClickPopUp
     {
         public PopUpRectangle(Rectangle r)
         {
-            _myShape = r;
+            MyShape = r;
         }
     }
 }

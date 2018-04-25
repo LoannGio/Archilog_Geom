@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using Archilog_Geom.Model;
 
-namespace Archilog_Geom
+namespace Archilog_Geom.View
 {
     public interface IGraphics
     {
-
         void InitializeToolBar();
         void RefreshView();
         void RefreshToolBar();

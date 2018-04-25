@@ -1,17 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
-namespace Archilog_Geom.Model
+namespace Archilog_Geom.Controller
 {
     public class CareTaker 
     {
         private static CareTaker _instance;
         public static CareTaker Instance => _instance ?? (_instance = new CareTaker());
 
-        private List<Memento> _listMementoes = new List<Memento>();
+        private readonly List<Memento> _listMementoes = new List<Memento>();
         private int _cursor = -1;
 
         private CareTaker() { }

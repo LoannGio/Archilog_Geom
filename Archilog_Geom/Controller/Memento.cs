@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using Archilog_Geom.Model;
 
-namespace Archilog_Geom.Model
+namespace Archilog_Geom.Controller
 {
     public class Memento
     {

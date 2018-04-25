@@ -1,19 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Archilog_Geom.Controller;
+using Archilog_Geom.Model;
+using System;
 using System.Windows.Forms;
 
 namespace Archilog_Geom.View
 {
     public partial class GroupEditor : Form
     {
-        private CsGraphics _parent;
-        private GroupShapes _group;
+        private readonly CsGraphics _parent;
+        private readonly GroupShapes _group;
 
         public GroupEditor(CsGraphics parent, GroupShapes group)
         {
@@ -22,8 +17,8 @@ namespace Archilog_Geom.View
             _parent = parent;
             _parent.Enabled = false;
             _group = group;
-            int width = group.XMax - group.X;
-            int height = group.YMax - group.Y;
+            var width = group.XMax - group.X;
+            var height = group.YMax - group.Y;
 
             originXField.Minimum = - width / 2;
             originXField.Maximum = _parent.DrawingPanel.Width - width / 2;

@@ -54,6 +54,7 @@
     <Compile Include="Controller\ReplaceShapeOnDrawing.cs" />
     <Compile Include="Controller\ReplaceShape.cs" />
     <Compile Include="Controller\UpdateShape.cs" />
+    <Compile Include="Model\IToolBar.cs" />
     <Compile Include="View\CsGraphicsDrawShape.cs" />
     <Compile Include="Model\AShape.cs" />
     <Compile Include="Model\ARightClickPopUp.cs" />

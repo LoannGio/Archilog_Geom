@@ -1,13 +1,8 @@
-﻿using System;
+﻿using Archilog_Geom.Model;
+using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Runtime.Remoting.Messaging;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml;
-using Archilog_Geom.Model;
 
 namespace Archilog_Geom.Controller
 {
@@ -21,7 +16,7 @@ namespace Archilog_Geom.Controller
             #region Save Toolbar
             XmlNode toolBar = doc.CreateElement("TOOLBAR");
           
-            foreach (var shape in mem.ToolBar._toolBarShapes)
+            foreach (var shape in mem.ToolBar.Items())
             {
                 toolBar.AppendChild(shape.SerializeXml(doc));
             }
@@ -46,9 +41,9 @@ namespace Archilog_Geom.Controller
 
         public Memento Load(string filename)
         {
-            Memento mem = new Memento();
-            var toolBar = new ToolBar();
-            var drawnShapes = new List<IShape>();
+            var mem = new Memento();
+            ToolBar toolBar;
+            List<IShape> drawnShapes;
             var doc = new XmlDocument();
             try
             {
@@ -68,7 +63,7 @@ namespace Archilog_Geom.Controller
 
         public ToolBar LoadToolBar(XmlNode toolbarNode)
         {
-            ToolBar toolbar = new ToolBar();
+            var toolbar = new ToolBar();
             foreach (XmlNode node  in toolbarNode.ChildNodes)
             {
                 IShape shape = null;
@@ -87,7 +82,7 @@ namespace Archilog_Geom.Controller
                 if (shape != null)
                 {
                     shape.XmlToShape(node);
-                    toolbar._toolBarShapes.Add(shape);
+                    toolbar.Add(shape);
                 }
             }
 
@@ -110,6 +105,8 @@ namespace Archilog_Geom.Controller
                         break;
                     case "GROUP":
                         shape = new GroupShapes();
+                        break;
+                    default:
                         break;
                 }
                 if (shape != null)

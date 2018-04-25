@@ -3,17 +3,14 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml;
-using System.Xml.Schema;
 using Archilog_Geom.Controller;
 
-namespace Archilog_Geom
+namespace Archilog_Geom.Model
 {
     public class GroupShapes : AShape
     {
-        private List<IShape> _children = new List<IShape>();
+        private readonly List<IShape> _children = new List<IShape>();
         public ReadOnlyCollection<IShape> Children => _children.AsReadOnly();
 
         public int XMax { get; set; }
@@ -51,7 +48,7 @@ namespace Archilog_Geom
 
         public bool ContainsRecurs(IShape shape)
         {
-            bool isContained = false;
+            var isContained = false;
             if (Children.Contains(shape))
                 isContained = true;
             else
@@ -65,10 +62,8 @@ namespace Archilog_Geom
         public override bool Contains(int x, int y)
         {
             foreach (var shape in _children)
-            {
                 if (shape.Contains(x, y))
                     return true;
-            }
 
             return false;
         }
@@ -83,10 +78,8 @@ namespace Archilog_Geom
             XmlNode groupShapes = doc.CreateElement("GROUP");
 
             foreach (var shape in _children)
-            {
                 groupShapes.AppendChild(shape.SerializeXml(doc));
-            }
-           
+
             return groupShapes;
         }
 
@@ -110,6 +103,8 @@ namespace Archilog_Geom
                         case "GROUP":
                             shape = new GroupShapes();
                             shape.XmlToShape(shapeNode);
+                            break;
+                        default:
                             break;
                     }
                     if(shape != null)
@@ -137,19 +132,19 @@ namespace Archilog_Geom
             {
                 if (shape.GetType() == typeof(GroupShapes))
                 {
-                    GroupShapes grp = (GroupShapes) shape;
+                    var grp = (GroupShapes) shape;
                     grp.UpdateBounds();
                     UpdateMinMax(grp.X, grp.Y, grp.XMax - grp.X, grp.YMax - grp.Y);
                 }
                 else if (shape.GetType() == typeof(Circle))
                 {
-                    Circle c = (Circle)shape;
+                    var c = (Circle)shape;
                     UpdateMinMax(c.X, c.Y, c.Diameter, c.Diameter);
 
                 }
                 else if (shape.GetType() == typeof(Rectangle))
                 {
-                    Rectangle r = (Rectangle)shape;
+                    var r = (Rectangle)shape;
                     UpdateMinMax(r.X, r.Y, r.Width, r.Height);
                 }
             }
@@ -169,7 +164,7 @@ namespace Archilog_Geom
 
         public override object Clone()
         {
-            GroupShapes clone = new GroupShapes();
+            var clone = new GroupShapes();
             foreach (var child in _children)
             {
                 clone.Add((IShape)child.Clone());

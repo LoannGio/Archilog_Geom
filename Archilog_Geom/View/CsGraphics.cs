@@ -2,18 +2,18 @@
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
-using System.Xml.Schema;
 using Archilog_Geom.Controller;
-using Archilog_Geom.View;
+using Archilog_Geom.Model;
+using Rectangle = Archilog_Geom.Model.Rectangle;
 
-namespace Archilog_Geom
+namespace Archilog_Geom.View
 {
     public class CsGraphics : Form, IGraphics
     {
         private Panel _toolBarPanel;
         private Panel _drawingPanel;
         public Panel DrawingPanel => _drawingPanel;
-        private int toolbarItemHeight = 100;
+        private readonly int toolbarItemHeight = 100;
         private PictureBox garbage;
         private Button undo;
         private Button redo;
@@ -32,12 +32,12 @@ namespace Archilog_Geom
         public void InitializeToolBar()
         {
             _toolBarPanel.Controls.Clear();
-            var shapes = Mediator.ToolBar._toolBarShapes;
-            for (int i = 0; i < shapes.Count; i++)
+            var shapes = Mediator.Instance.ToolBar.Items();
+            for (var i = 0; i < shapes.Count; i++)
             {
                 #region create the sub panel
-                Panel subPanel = new Panel();
-                int itemXposition = 0;
+                var subPanel = new Panel();
+                var itemXposition = 0;
                 subPanel.BorderStyle = BorderStyle.FixedSingle;
                 subPanel.Location = new Point(itemXposition, i*toolbarItemHeight);
                 subPanel.Size = new Size(_toolBarPanel.Width, toolbarItemHeight);
@@ -67,16 +67,16 @@ namespace Archilog_Geom
 
         public void OpenRightClickPopUp()
         {
-            ContextMenu popUp = new ContextMenu();
-            foreach (var item in Mediator.RightClickPopUp.RightClickPopUpItems)
+            var popUp = new ContextMenu();
+            foreach (var item in Mediator.Instance.RightClickPopUp.RightClickPopUpItems)
             {
-                MenuItem mi = new MenuItem(item);
+                var mi = new MenuItem(item);
                 mi.Click += RightClickMenuItem_Click;
                 popUp.MenuItems.Add(mi);
             }
 
-            int mouseX = MousePosition.X - this.Bounds.X;
-            int mouseY = MousePosition.Y - this.Bounds.Y - _drawingPanel.Bounds.Y;
+            var mouseX = MousePosition.X - this.Bounds.X;
+            var mouseY = MousePosition.Y - this.Bounds.Y - _drawingPanel.Bounds.Y;
             popUp.Show(this, new Point(mouseX, mouseY));
         }
 
@@ -88,8 +88,8 @@ namespace Archilog_Geom
 
         public void OpenRectangleEditMenu(Rectangle r)
         {
-            var rectangleEditor = new RectangleEditor(this, r);
-            rectangleEditor.Show();
+            var RectangleEditor = new RectangleEditor(this, r);
+            RectangleEditor.Show();
         }
 
         public void OpenGroupEditMenu(GroupShapes g)
@@ -107,8 +107,8 @@ namespace Archilog_Geom
         {
             if (e.Button == MouseButtons.Left)
             {
-                Control c = (Control)sender;
-                int subPanelNumber = c.Top / toolbarItemHeight;
+                var c = (Control)sender;
+                var subPanelNumber = c.Top / toolbarItemHeight;
                 Mediator.Instance.LoadCurrentShape(subPanelNumber);
             }
         }
@@ -117,14 +117,14 @@ namespace Archilog_Geom
         {
             if (e.Button == MouseButtons.Left)
             {
-                Control c = (Control) sender;
-                int subPanelNumber = c.Top / toolbarItemHeight;
-                int mouseX = e.X + _toolBarPanel.Bounds.X;
-                int mouseY = e.Y + subPanelNumber * toolbarItemHeight + _drawingPanel.Bounds.Y;
+                var c = (Control) sender;
+                var subPanelNumber = c.Top / toolbarItemHeight;
+                var mouseX = e.X + _toolBarPanel.Bounds.X;
+                var mouseY = e.Y + subPanelNumber * toolbarItemHeight + _drawingPanel.Bounds.Y;
                 if (_drawingPanel.Bounds.Contains(mouseX, mouseY))
                 {
-                    int dp_X = _drawingPanel.Bounds.X;
-                    int toolbar_X = _toolBarPanel.Bounds.X;
+                    var dp_X = _drawingPanel.Bounds.X;
+                    var toolbar_X = _toolBarPanel.Bounds.X;
                     Mediator.Instance.DrawCurrentShape(e.X - dp_X + toolbar_X, e.Y + subPanelNumber * toolbarItemHeight);
                     _drawingPanel.Refresh();
                 }
@@ -166,11 +166,11 @@ namespace Archilog_Geom
             if (e.Button == MouseButtons.Left)
             {
                 #region Draw shape
-                Control c = (Control)sender;
-                int subPanelNumber = c.Top / toolbarItemHeight;
-                int mouseX = e.X + (_drawingPanel.Bounds.X - _toolBarPanel.Bounds.X);
-                int mouseY = e.Y + subPanelNumber * toolbarItemHeight + _drawingPanel.Bounds.Y;
-                if (Mediator.ClickedOnSelectedShape && _toolBarPanel.Bounds.Contains(mouseX, mouseY))
+                var c = (Control)sender;
+                var subPanelNumber = c.Top / toolbarItemHeight;
+                var mouseX = e.X + (_drawingPanel.Bounds.X - _toolBarPanel.Bounds.X);
+                var mouseY = e.Y + subPanelNumber * toolbarItemHeight + _drawingPanel.Bounds.Y;
+                if (Mediator.Instance.ClickedOnSelectedShape && _toolBarPanel.Bounds.Contains(mouseX, mouseY))
                 {
                     Mediator.Instance.SaveShapesInToolbar();
                 }
@@ -180,7 +180,7 @@ namespace Archilog_Geom
 
                 mouseX = e.X + _drawingPanel.Bounds.X;
                 mouseY = e.Y + _drawingPanel.Bounds.Y;
-                if (Mediator.ClickedOnSelectedShape && garbage.Bounds.Contains(mouseX, mouseY))
+                if (Mediator.Instance.ClickedOnSelectedShape && garbage.Bounds.Contains(mouseX, mouseY))
                 {
                     Mediator.Instance.DeleteSelectedShapes();
                 }
@@ -191,7 +191,7 @@ namespace Archilog_Geom
         private void _drawingPanel_Paint(object sender, PaintEventArgs e)
         {
             e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
-            foreach (var shape in Mediator.DrawnShapes)
+            foreach (var shape in Mediator.Instance.DrawnShapes)
             {
                 shape.Accept(new CsGraphicsDrawShape(e));
             }
@@ -209,16 +209,16 @@ namespace Archilog_Geom
 
         private void export_Click(object sender, EventArgs e)
         {
-            SaveFileDialog saveDialog = new SaveFileDialog();
-            DialogResult result = saveDialog.ShowDialog();
+            var saveDialog = new SaveFileDialog();
+            var result = saveDialog.ShowDialog();
             if (result == DialogResult.OK)
                  Mediator.Instance.Export(saveDialog.FileName);
         }
 
         private void import_Click(object sender, EventArgs e)
         {
-            OpenFileDialog fileDialog = new OpenFileDialog();
-            DialogResult result = fileDialog.ShowDialog();
+            var fileDialog = new OpenFileDialog();
+            var result = fileDialog.ShowDialog();
             if (result == DialogResult.OK)
                  Mediator.Instance.Import(fileDialog.FileName);
         }
@@ -235,7 +235,7 @@ namespace Archilog_Geom
 
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CsGraphics));
+            var resources = new System.ComponentModel.ComponentResourceManager(typeof(CsGraphics));
             this._drawingPanel = new System.Windows.Forms.Panel();
             this._toolBarPanel = new System.Windows.Forms.Panel();
             this.garbage = new System.Windows.Forms.PictureBox();

@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Archilog_Geom.Model;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Rectangle = Archilog_Geom.Model.Rectangle;
 
 namespace Archilog_Geom.Controller
 {
     public class UpdateShape : IShapeVisitor
     {
-        private object[] _params;
+        private readonly object[] _params;
 
         public UpdateShape(params object[] param)
         {
@@ -18,10 +15,10 @@ namespace Archilog_Geom.Controller
 
         public void VisitCircle(Circle circle)
         {
-            int x = (int) _params[0];
-            int y = (int)_params[1];
-            int diameter = (int)_params[2];
-            Color color = (Color) _params[3];
+            var x = (int) _params[0];
+            var y = (int)_params[1];
+            var diameter = (int)_params[2];
+            var color = (Color) _params[3];
 
             circle.Accept(new ReplaceShape(x, y));
             circle.Diameter = diameter;
@@ -30,11 +27,11 @@ namespace Archilog_Geom.Controller
 
         public void VisitRectangle(Rectangle rect)
         {
-            int x = (int)_params[0];
-            int y = (int)_params[1];
-            int width = (int)_params[2];
-            int height = (int)_params[3];
-            Color color = (Color)_params[4];
+            var x = (int)_params[0];
+            var y = (int)_params[1];
+            var width = (int)_params[2];
+            var height = (int)_params[3];
+            var color = (Color)_params[4];
 
             rect.Accept(new ReplaceShape(x, y));
             rect.Width = width;
@@ -44,9 +41,9 @@ namespace Archilog_Geom.Controller
 
         public void VisitGroup(GroupShapes group)
         {
-            int x = (int)_params[0];
-            int y = (int)_params[1];
-            Color color = (Color)_params[2];
+            var x = (int)_params[0];
+            var y = (int)_params[1];
+            var color = (Color)_params[2];
 
             group.Color = color;
             foreach (var shape in group.Children)

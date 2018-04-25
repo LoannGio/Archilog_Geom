@@ -1,16 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
-namespace Archilog_Geom
+namespace Archilog_Geom.Model
 {
     public interface IRightClickPopUp
     {
         void Edit();
         void Delete();
         void Handle(int i);
-        List<String> RightClickPopUpItems { get; }
+        List<string> RightClickPopUpItems { get; }
     }
 }

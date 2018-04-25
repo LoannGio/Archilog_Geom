@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Archilog_Geom.Model;
+using Archilog_Geom.View;
 
 namespace Archilog_Geom.Controller
 {
     public class EditMenu : IShapeVisitor
     {
-        private IGraphics _g;
+        private readonly IGraphics _g;
 
         public EditMenu(IGraphics g)
         {

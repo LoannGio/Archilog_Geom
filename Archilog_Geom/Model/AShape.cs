@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Drawing;
 using System.Xml;
 using Archilog_Geom.Controller;
 
-namespace Archilog_Geom
+namespace Archilog_Geom.Model
 {
     public abstract class AShape : IShape
     {

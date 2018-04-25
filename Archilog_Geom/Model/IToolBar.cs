@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Archilog_Geom.Model
 {
@@ -11,6 +8,7 @@ namespace Archilog_Geom.Model
         IShape Get(int i);
         void RemoveAt(int i);
         void Add(IShape shape);
+        List<IShape> Items();
         void InitFromFile(string filename);
         void FillShapes();
     }

@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml;
 using Archilog_Geom.Controller;
 
-namespace Archilog_Geom
+namespace Archilog_Geom.Model
 {
     public class Circle : AShape
     {
@@ -31,13 +27,10 @@ namespace Archilog_Geom
 
         public override bool Contains(int x, int y)
         {
-            int circleCenterX = X + Diameter/2;
-            int circleCenterY = Y + Diameter/2;
+            var circleCenterX = X + Diameter/2;
+            var circleCenterY = Y + Diameter/2;
 
-            if (EuclideanDistance(circleCenterX, circleCenterY, x, y) <= Diameter/2)
-                return true;
-
-            return false;
+            return EuclideanDistance(circleCenterX, circleCenterY, x, y) <= Diameter/2;
         }
 
         public override IRightClickPopUp CreateRightClickPopUp()
@@ -70,14 +63,14 @@ namespace Archilog_Geom
         {
             try
             {
-                XmlNode x = node.ChildNodes.Item(0);
-                XmlNode y = node.ChildNodes.Item(1);
-                XmlNode diameter = node.ChildNodes.Item(2);
-                XmlNode color = node.ChildNodes.Item(3);
+                var x = node.ChildNodes.Item(0);
+                var y = node.ChildNodes.Item(1);
+                var diameter = node.ChildNodes.Item(2);
+                var color = node.ChildNodes.Item(3);
 
-                X = Int32.Parse(x.InnerText);
-                Y = Int32.Parse(y.InnerText);
-                Diameter = Int32.Parse(diameter.InnerText);
+                X = int.Parse(x.InnerText);
+                Y = int.Parse(y.InnerText);
+                Diameter = int.Parse(diameter.InnerText);
                 Color = Color.FromName(color.InnerText.Substring(color.InnerText.IndexOf("[")+1, color.InnerText.IndexOf("]") - color.InnerText.IndexOf("[") -1));
             }
             catch (NullReferenceException)

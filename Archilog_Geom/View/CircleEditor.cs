@@ -1,19 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Archilog_Geom.Controller;
+using Archilog_Geom.Model;
+using System;
 using System.Windows.Forms;
 
 namespace Archilog_Geom.View
 {
     public partial class CircleEditor : Form
     {
-        private Circle _circle;
-        private CsGraphics _parent;
+        private readonly Circle _circle;
+        private readonly CsGraphics _parent;
 
         public CircleEditor(CsGraphics parent, Circle c)
         {

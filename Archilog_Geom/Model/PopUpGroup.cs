@@ -1,28 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Archilog_Geom.Controller;
 
-namespace Archilog_Geom
+namespace Archilog_Geom.Model
 {
     class PopUpGroup : ARightClickPopUp
     {
         public PopUpGroup(GroupShapes g)
         {
-            _myShape = g;
+            MyShape = g;
             RightClickPopUpItems.Insert(1, "Degrouper");
             RightClickPopUpItems.Insert(1, "Grouper");
         }
 
         public void Group()
         {
-            Mediator.Instance.CreateGroup((GroupShapes)_myShape);
+            Mediator.Instance.CreateGroup((GroupShapes)MyShape);
         }
 
         public void Degroup()
         {
-            Mediator.Instance.DeleteGroup((GroupShapes) _myShape);
+            Mediator.Instance.DeleteGroup((GroupShapes) MyShape);
         }
 
         public override void Handle(int i)

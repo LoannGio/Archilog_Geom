@@ -1,45 +1,46 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using Archilog_Geom.Controller;
 using Archilog_Geom.Model;
+using Archilog_Geom.View;
+using Rectangle = Archilog_Geom.Model.Rectangle;
+using ToolBar = Archilog_Geom.Model.ToolBar;
 
-namespace Archilog_Geom
+namespace Archilog_Geom.Controller
 {
     public class Mediator : IMediator
     {
         private static Mediator _instance;
         public static Mediator Instance => _instance ?? (_instance = new Mediator());
 
-        public static ToolBar ToolBar { get; private set; } = new ToolBar();
+        public ToolBar ToolBar { get; private set; } = new ToolBar();
 
         private IShape _currentShape;
-        public static List<IShape> SelectedShapes { get; } = new List<IShape>();
-        public static List<IShape> DrawnShapes { get; private set; } = new List<IShape>();
-        public static bool ClickedOnSelectedShape { get; set; } = false;
+        public List<IShape> SelectedShapes { get; } = new List<IShape>();
+        public List<IShape> DrawnShapes { get; } = new List<IShape>();
+        public bool ClickedOnSelectedShape { get; set; }
 
-        private static IRightClickPopUp _rightClickPopUp = null;
-        public static IRightClickPopUp RightClickPopUp => _rightClickPopUp;
+        public IRightClickPopUp RightClickPopUp { get; private set; }
 
         //default graphic lib
-        private static IGraphics g;
+        private static IGraphics _g;
         
         private Mediator() { }
 
         [STAThread]
-        static void Main()
+        private static void Main()
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            ToolBar.InitFromFile("../../data/init.xml");
-            ToolBar.FillShapes();
-            CreateMemento();
-            g = new CsGraphics();
-            Application.Run((Form) g);
+
+            Instance.ToolBar.InitFromFile("../../data/init.xml");
+            Instance.ToolBar.FillShapes();
+            Instance.CreateMemento();
+
+            _g = new CsGraphics();
+            Application.Run((Form) _g);
         }
 
         public void LoadCurrentShape(int i)
@@ -53,7 +54,7 @@ namespace Archilog_Geom
             {
                 ToolBar.RemoveAt(i);
                 _currentShape = null;
-                g.RefreshToolBar();
+                _g.RefreshToolBar();
                 CreateMemento();
             }
         }
@@ -64,7 +65,7 @@ namespace Archilog_Geom
             {
                 _currentShape.Accept(new ReplaceShapeOnDrawing(x, y));
                 DrawnShapes.Add(_currentShape);
-                g.RefreshView();
+                _g.RefreshView();
                 _currentShape = null;
                 CreateMemento();
             }
@@ -84,12 +85,12 @@ namespace Archilog_Geom
                 else
                     SelectedShapes.Remove(shape);
             }     
-            g.RefreshView();
+            _g.RefreshView();
         }
 
         public void DrawingPanelLeftMouseButtonPressed(int mouseX, int mouseY)
         {
-            var shape = SelectedShapes.FirstOrDefault(s => s.Contains(mouseX, mouseY));
+            var shape = SelectedShapes.First(s => s.Contains(mouseX, mouseY));
             if (shape != null)
             {
                 ClickedOnSelectedShape = true;
@@ -98,39 +99,39 @@ namespace Archilog_Geom
 
         public void DrawingPanelRightMouseButtonPressed(int mouseX, int mouseY)
         {
-            _rightClickPopUp = null;
-            bool clickedOnSelectedShape = SelectedShapes.Where(s => s.Contains(mouseX, mouseY)).ToList().Count > 0;
+            RightClickPopUp = null;
+            var clickedOnSelectedShape = SelectedShapes.Where(s => s.Contains(mouseX, mouseY)).ToList().Count > 0;
             if (SelectedShapes.Count > 1 && clickedOnSelectedShape)
             {
-                GroupShapes tmpSelectedShapes = new GroupShapes();
+                var tmpSelectedShapes = new GroupShapes();
                 foreach (var shape in SelectedShapes)
                 {
                     tmpSelectedShapes.Add(shape);                    
                 }
-                _rightClickPopUp = tmpSelectedShapes.CreateRightClickPopUp();
+                RightClickPopUp = tmpSelectedShapes.CreateRightClickPopUp();
             }
             else
             {
                 var shape = DrawnShapes.LastOrDefault(s => s.Contains(mouseX, mouseY));
                 if (shape != null)
                 {
-                    _rightClickPopUp = shape.CreateRightClickPopUp();
+                    RightClickPopUp = shape.CreateRightClickPopUp();
                 }
             }
-            if(_rightClickPopUp != null)
-                g.OpenRightClickPopUp();
+            if(RightClickPopUp != null)
+                _g.OpenRightClickPopUp();
         }
 
         public void SaveShapesInToolbar()
         {
             foreach (var shape in SelectedShapes)
             {
-                IShape toolBarNewShape = (IShape)shape.Clone();
+                var toolBarNewShape = (IShape)shape.Clone();
                 ToolBar.Add(toolBarNewShape);
             }
 
             ClickedOnSelectedShape = false;
-            g.RefreshToolBar();
+            _g.RefreshToolBar();
             CreateMemento();
         }
 
@@ -139,19 +140,19 @@ namespace Archilog_Geom
             DrawnShapes.RemoveAll(s => SelectedShapes.Contains(s));
 
             SelectedShapes.Clear();
-            g.RefreshView();
+            _g.RefreshView();
             ClickedOnSelectedShape = false;
             CreateMemento();
         }
 
         public void HandleRightClickMenuItemClick(int i)
         {
-            _rightClickPopUp.Handle(i);
+            RightClickPopUp.Handle(i);
         }
 
         public void ShapeEditMenu(IShape shape)
         {
-            shape.Accept(new EditMenu(g));
+            shape.Accept(new EditMenu(_g));
         }
 
         public void UpdateGroup(GroupShapes group, Color color, int x, int y)
@@ -185,7 +186,7 @@ namespace Archilog_Geom
                     DrawnShapes.Remove(child);
                 }
             }
-            g.RefreshView();
+            _g.RefreshView();
             CreateMemento();
         }
 
@@ -211,46 +212,44 @@ namespace Archilog_Geom
                     DrawnShapes.Add(shape);
                 }
                 SelectedShapes.Clear();
-                g.RefreshView();
+                _g.RefreshView();
             }
             CreateMemento();
         }
 
-        private static void CreateMemento()
+        public void CreateMemento()
         {
-            Memento save = new Memento();
+            var save = new Memento();
             save.SetState(DrawnShapes, ToolBar);
             CareTaker.Instance.Add(save);
         }
 
-        private void RestoreState(Memento newState)
+        public void RestoreState(Memento newState)
         {
             DrawnShapes.Clear();
             SelectedShapes.Clear();
             foreach (var shape in newState.DrawnShapes)
-            {
-                DrawnShapes.Add((IShape)shape.Clone());
-            }
+                DrawnShapes.Add((IShape) shape.Clone());
             ToolBar = (ToolBar)newState.ToolBar.Clone();
-            g.RefreshView();
-            g.RefreshToolBar();
+            _g.RefreshView();
+            _g.RefreshToolBar();
         }
 
         public void Undo()
         {
-            Memento newState = CareTaker.Instance.Undo();
+            var newState = CareTaker.Instance.Undo();
             RestoreState(newState);
         }
 
         public void Redo()
         {
-            Memento newState = CareTaker.Instance.Redo();
+            var newState = CareTaker.Instance.Redo();
             RestoreState(newState);
         }
 
         public void Export(string filename)
         {
-            FileManager fm = new FileManager();
+            var fm = new FileManager();
             if (!filename.ToLower().EndsWith(".xml"))
                 filename += ".xml";
             fm.Save(filename, CareTaker.Instance.GetCurrentMemento());
@@ -258,7 +257,7 @@ namespace Archilog_Geom
 
         public void Import(string filename)
         {
-            FileManager fm = new FileManager();
+            var fm = new FileManager();
             Memento mem = null;
             if (filename.ToLower().EndsWith(".xml"))
                 mem = fm.Load(filename);
@@ -268,14 +267,14 @@ namespace Archilog_Geom
                 mem.ToolBar.FillShapes();
                 CareTaker.Instance.Add(mem);
                 RestoreState(mem);
-                g.RefreshView();
-                g.RefreshToolBar();
+                _g.RefreshView();
+                _g.RefreshToolBar();
             }
         }
 
         public void SaveBeforeAppClosure()
         {
-            string path = "../../data/init.xml";
+            var path = "../../data/init.xml";
             Export(path);
         }
 
@@ -284,7 +283,7 @@ namespace Archilog_Geom
             DrawnShapes.Clear();
             SelectedShapes.Clear();
             CreateMemento();
-            g.RefreshView();
+            _g.RefreshView();
         }
     }
 }

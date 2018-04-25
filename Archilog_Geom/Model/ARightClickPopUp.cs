@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using Archilog_Geom.Controller;
 
-namespace Archilog_Geom
+namespace Archilog_Geom.Model
 {
     abstract class ARightClickPopUp : IRightClickPopUp
     {
-        protected IShape _myShape;
+        protected IShape MyShape;
 
         public List<string> RightClickPopUpItems { get; } = new List<string>();
 
@@ -21,7 +18,7 @@ namespace Archilog_Geom
 
         public void Edit()
         {
-            Mediator.Instance.ShapeEditMenu(_myShape);
+            Mediator.Instance.ShapeEditMenu(MyShape);
         }
 
         public virtual void Handle(int i)
@@ -41,7 +38,7 @@ namespace Archilog_Geom
 
         public void Delete()
         {
-            Mediator.Instance.EraseShape(_myShape);
+            Mediator.Instance.EraseShape(MyShape);
         }
     }
 }

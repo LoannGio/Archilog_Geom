@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Archilog_Geom.Model;
 
 namespace Archilog_Geom.Controller
 {
     class ReplaceShape : IShapeVisitor
     {
-        private int _x;
-        private int _y;
+        private readonly int _x;
+        private readonly int _y;
 
         public ReplaceShape(int x, int y)
         {

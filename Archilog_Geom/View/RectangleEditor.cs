@@ -1,19 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Archilog_Geom.Controller;
+using System;
 using System.Windows.Forms;
+using Rectangle = Archilog_Geom.Model.Rectangle;
 
 namespace Archilog_Geom.View
 {
     public partial class RectangleEditor : Form
     {
-        private Rectangle _rect;
-        private CsGraphics _parent;
+        private readonly Rectangle _rect;
+        private readonly CsGraphics _parent;
 
         public RectangleEditor(CsGraphics parent, Rectangle r)
         {
