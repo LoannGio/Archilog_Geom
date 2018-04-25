@@ -235,7 +235,7 @@ namespace Archilog_Geom.View
 
         private void InitializeComponent()
         {
-            var resources = new System.ComponentModel.ComponentResourceManager(typeof(CsGraphics));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CsGraphics));
             this._drawingPanel = new System.Windows.Forms.Panel();
             this._toolBarPanel = new System.Windows.Forms.Panel();
             this.garbage = new System.Windows.Forms.PictureBox();
@@ -347,6 +347,7 @@ namespace Archilog_Geom.View
             this.Controls.Add(this.garbage);
             this.Controls.Add(this._toolBarPanel);
             this.Controls.Add(this._drawingPanel);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "CsGraphics";
             this.Text = "Archilog Geom";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.CsGraphics_FormClosing);
