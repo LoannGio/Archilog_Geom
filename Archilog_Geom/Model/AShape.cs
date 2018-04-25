@@ -11,11 +11,8 @@ namespace Archilog_Geom
 {
     public abstract class AShape : IShape
     {
-
         public int X { get; set; }
         public int Y { get; set; }
-
-        private List<string> RightClickPopUpItems = new List<string>();
 
         public virtual Color Color { get; set; }
 

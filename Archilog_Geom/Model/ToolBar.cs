@@ -6,19 +6,38 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using Archilog_Geom.Controller;
+using Archilog_Geom.Model;
 
 namespace Archilog_Geom
 {
-    public class ToolBar : ICloneable
+    public class ToolBar : IToolBar
     {
-        public List<IShape> ToolBarShapes { get; private set; } = new List<IShape>();
+        private List<IShape> _toolBarShapes = new List<IShape>();
+
+        public IShape Get(int i)
+        {
+            if(_toolBarShapes.Count > i)
+                return _toolBarShapes[i];
+            return null;
+        }
+
+        public void RemoveAt(int i)
+        {
+            if (_toolBarShapes.Count > i)
+                _toolBarShapes.RemoveAt(i);
+        }
+
+        public void Add(IShape shape)
+        {
+            _toolBarShapes.Add(shape);
+        }
 
         public object Clone()
         {
             ToolBar clone = new ToolBar();
-            foreach (var shape in ToolBarShapes)
+            foreach (var shape in _toolBarShapes)
             {
-                clone.ToolBarShapes.Add((IShape)shape.Clone());
+                clone._toolBarShapes.Add((IShape)shape.Clone());
             }
             return clone;
         }
@@ -31,7 +50,7 @@ namespace Archilog_Geom
             {
                 doc.Load("../../data/init.xml");
 
-                ToolBarShapes = fm.LoadToolBar(doc.DocumentElement.FirstChild).ToolBarShapes;
+                _toolBarShapes = fm.LoadToolBar(doc.DocumentElement.FirstChild)._toolBarShapes;
             }
             catch (Exception) { }
         }
@@ -44,7 +63,7 @@ namespace Archilog_Geom
                 typeof(Circle)
             };
 
-            foreach (var shape in ToolBarShapes)
+            foreach (var shape in _toolBarShapes)
             {
                 types.Remove(shape.GetType());
             }
@@ -52,7 +71,7 @@ namespace Archilog_Geom
             foreach (Type type  in types)
             {
                 IShape shape = (IShape)Activator.CreateInstance(type);
-                ToolBarShapes.Add(shape);
+                _toolBarShapes.Add(shape);
             }
 
         }

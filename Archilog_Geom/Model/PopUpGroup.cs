@@ -10,24 +10,19 @@ namespace Archilog_Geom
     {
         public PopUpGroup(GroupShapes g)
         {
-            myShape = g;
+            _myShape = g;
             RightClickPopUpItems.Insert(1, "Degrouper");
             RightClickPopUpItems.Insert(1, "Grouper");
         }
 
-        public override void Edit()
-        {
-            Mediator.Instance.GroupEditMenu((GroupShapes)myShape);
-        }
-
         public void Group()
         {
-            Mediator.Instance.CreateGroup((GroupShapes)myShape);
+            Mediator.Instance.CreateGroup((GroupShapes)_myShape);
         }
 
         public void Degroup()
         {
-            Mediator.Instance.DeleteGroup((GroupShapes) myShape);
+            Mediator.Instance.DeleteGroup((GroupShapes) _myShape);
         }
 
         public override void Handle(int i)

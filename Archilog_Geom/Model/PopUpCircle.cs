@@ -10,12 +10,7 @@ namespace Archilog_Geom
     {
         public PopUpCircle(Circle c)
         {
-            myShape = c;
-        }
-
-        public override void Edit()
-        {
-            Mediator.Instance.CircleEditMenu((Circle)myShape);
+            _myShape = c;
         }
     }
 }

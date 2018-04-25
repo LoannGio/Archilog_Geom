@@ -21,7 +21,7 @@ namespace Archilog_Geom.Controller
             #region Save Toolbar
             XmlNode toolBar = doc.CreateElement("TOOLBAR");
           
-            foreach (var shape in mem.ToolBar.ToolBarShapes)
+            foreach (var shape in mem.ToolBar._toolBarShapes)
             {
                 toolBar.AppendChild(shape.SerializeXml(doc));
             }
@@ -87,7 +87,7 @@ namespace Archilog_Geom.Controller
                 if (shape != null)
                 {
                     shape.XmlToShape(node);
-                    toolbar.ToolBarShapes.Add(shape);
+                    toolbar._toolBarShapes.Add(shape);
                 }
             }
 

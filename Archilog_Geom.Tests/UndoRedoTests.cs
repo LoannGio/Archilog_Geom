@@ -25,8 +25,8 @@ namespace Archilog_Geom.Tests
             IGraphics ig = new CsGraphics();
             Mediator m = Mediator.Instance;
             m.GetType().GetField("g", BindingFlags.NonPublic| BindingFlags.Instance | BindingFlags.Static).SetValue(m, ig);
-            Mediator.ToolBar.ToolBarShapes.Add(circle);
-            Mediator.ToolBar.ToolBarShapes.Add(rect);
+            Mediator.ToolBar._toolBarShapes.Add(circle);
+            Mediator.ToolBar._toolBarShapes.Add(rect);
             Mediator.Instance.LoadCurrentShape(0);
             Mediator.Instance.DrawCurrentShape(50, 50);
             Mediator.Instance.LoadCurrentShape(1);

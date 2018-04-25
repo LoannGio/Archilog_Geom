@@ -137,7 +137,9 @@ namespace Archilog_Geom
             {
                 if (shape.GetType() == typeof(GroupShapes))
                 {
-                    ((GroupShapes)shape).UpdateBounds();
+                    GroupShapes grp = (GroupShapes) shape;
+                    grp.UpdateBounds();
+                    UpdateMinMax(grp.X, grp.Y, grp.XMax - grp.X, grp.YMax - grp.Y);
                 }
                 else if (shape.GetType() == typeof(Circle))
                 {

@@ -16,8 +16,7 @@ namespace Archilog_Geom.View
 
         public void VisitCircle(Circle circle)
         {
-            SolidBrush brush;
-            brush = new SolidBrush(circle.Color);
+            SolidBrush brush = new SolidBrush(circle.Color);
             _e.Graphics.FillEllipse(brush, circle.X, circle.Y, circle.Diameter, circle.Diameter);
             if (Mediator.SelectedShapes.Contains(circle) || _amISelected)
             {
@@ -27,8 +26,7 @@ namespace Archilog_Geom.View
 
         public void VisitRectangle(Rectangle rect)
         {
-            SolidBrush brush;
-            brush = new SolidBrush(rect.Color);
+            SolidBrush brush = new SolidBrush(rect.Color);
             _e.Graphics.FillRectangle(brush, rect.X, rect.Y, rect.Width, rect.Height);
             if (Mediator.SelectedShapes.Contains(rect) || _amISelected)
             {
@@ -45,7 +43,6 @@ namespace Archilog_Geom.View
             {
                 shape.Accept(this);
             }
-            _amISelected = false;
         }
     }
 }

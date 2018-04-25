@@ -44,80 +44,29 @@ namespace Archilog_Geom
 
         public void LoadCurrentShape(int i)
         {
-            _currentShape = (IShape) ToolBar.ToolBarShapes[i].Clone();
+            _currentShape = (IShape) ToolBar.Get(i).Clone();
         }
 
         public void DeleteCurrentShapeFromToolBar(int i)
         {
             if (_currentShape != null)
             {
-                ToolBar.ToolBarShapes.RemoveAt(i);
+                ToolBar.RemoveAt(i);
+                _currentShape = null;
+                g.RefreshToolBar();
+                CreateMemento();
             }
-            _currentShape = null;
-            g.RefreshToolBar();
-            CreateMemento();
         }
 
         public void DrawCurrentShape(int x, int y)
         {
             if (_currentShape != null)
             {
-                if (_currentShape.GetType() == typeof(Rectangle))
-                {
-                    Rectangle r = (Rectangle) _currentShape;
-                    _currentShape.X = (x - r.Width/2);
-                    _currentShape.Y = (y - r.Height/2);
-                }
-                else if (_currentShape.GetType() == typeof(Circle))
-                {
-                    Circle c = (Circle) _currentShape;
-                    _currentShape.X = (x - c.Diameter / 2);
-                    _currentShape.Y = (y - c.Diameter / 2);
-                }
-                else if (_currentShape.GetType() == typeof(GroupShapes))
-                {
-                    GroupShapes group = (GroupShapes) _currentShape;
-                    foreach (var shape in group.Children)
-                    {
-                       ReplaceGroupOnDrawing(shape, x, y, group.X, group.XMax, group.Y, group.YMax);
-                    }
-                    group.UpdateBounds();
-                    _currentShape = group;
-                }
+                _currentShape.Accept(new ReplaceShapeOnDrawing(x, y));
                 DrawnShapes.Add(_currentShape);
                 g.RefreshView();
-            }
-            _currentShape = null;
-            CreateMemento();
-        }
-
-        private void ReplaceGroupOnDrawing(IShape shape, int x, int y, int xMin, int xMax, int yMin, int yMax)
-        {
-            if (shape.GetType() == typeof(GroupShapes))
-            {
-                GroupShapes group = (GroupShapes) shape;
-                foreach (var child in group.Children)
-                {
-                    ReplaceGroupOnDrawing(child, x, y, xMin, xMax, yMin, yMax);
-                }
-                group.UpdateBounds();
-            }
-            else
-            {
-                int width = xMax - xMin;
-                int height = yMax - yMin;
-                if (shape.GetType() == typeof(Circle))
-                {
-                    Circle c = (Circle)shape;
-                    shape.X = (x + c.X - xMin - width/2);
-                    shape.Y = (y + c.Y - yMin - height/2);
-                }
-                else if (shape.GetType() == typeof(Rectangle))
-                {
-                    Rectangle r = (Rectangle)shape;
-                    shape.X = (x + r.X - xMin - width/2);
-                    shape.Y = (y + r.Y - yMin - height/2);
-                }
+                _currentShape = null;
+                CreateMemento();
             }
         }
 
@@ -177,7 +126,7 @@ namespace Archilog_Geom
             foreach (var shape in SelectedShapes)
             {
                 IShape toolBarNewShape = (IShape)shape.Clone();
-                ToolBar.ToolBarShapes.Add(toolBarNewShape);
+                ToolBar.Add(toolBarNewShape);
             }
 
             ClickedOnSelectedShape = false;
@@ -200,19 +149,9 @@ namespace Archilog_Geom
             _rightClickPopUp.Handle(i);
         }
 
-        public void CircleEditMenu(Circle c)
+        public void ShapeEditMenu(IShape shape)
         {
-            g.OpenCircleEditMenu(c);
-        }
-
-        public void RectangleEditMenu(Rectangle r)
-        {
-            g.OpenRectangleEditMenu(r);
-        }
-
-        public void GroupEditMenu(GroupShapes group)
-        {
-            g.OpenGroupEditMenu(group);
+            shape.Accept(new EditMenu(g));
         }
 
         public void UpdateGroup(GroupShapes group, Color color, int x, int y)
@@ -346,13 +285,6 @@ namespace Archilog_Geom
             SelectedShapes.Clear();
             CreateMemento();
             g.RefreshView();
-        }
-
-        private void Update(IShape shape)
-        {
-            foreach (var child in DrawnShapes.Where(c => c.GetType() == typeof(GroupShapes)))
-              if(((GroupShapes)child).ContainsRecurs(shape))
-                  ((GroupShapes)child).UpdateBounds();
         }
     }
 }

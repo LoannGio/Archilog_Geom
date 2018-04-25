@@ -8,9 +8,9 @@ namespace Archilog_Geom
 {
     abstract class ARightClickPopUp : IRightClickPopUp
     {
-        protected IShape myShape;
+        protected IShape _myShape;
 
-        public List<String> RightClickPopUpItems { get; } = new List<string>();
+        public List<string> RightClickPopUpItems { get; } = new List<string>();
 
         protected ARightClickPopUp()
         {
@@ -19,7 +19,10 @@ namespace Archilog_Geom
         }
 
 
-        public abstract void Edit();
+        public void Edit()
+        {
+            Mediator.Instance.ShapeEditMenu(_myShape);
+        }
 
         public virtual void Handle(int i)
         {
@@ -38,7 +41,7 @@ namespace Archilog_Geom
 
         public void Delete()
         {
-            Mediator.Instance.EraseShape(myShape);
+            Mediator.Instance.EraseShape(_myShape);
         }
     }
 }

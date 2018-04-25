@@ -20,7 +20,6 @@ namespace Archilog_Geom
         private Button import;
         private Button export;
         private Button clearAll;
-        private Pen selectedItemPen = new Pen(Color.Black);
 
         public CsGraphics()
         {
@@ -33,7 +32,7 @@ namespace Archilog_Geom
         public void InitializeToolBar()
         {
             _toolBarPanel.Controls.Clear();
-            var shapes = Mediator.ToolBar.ToolBarShapes;
+            var shapes = Mediator.ToolBar._toolBarShapes;
             for (int i = 0; i < shapes.Count; i++)
             {
                 #region create the sub panel
@@ -46,7 +45,7 @@ namespace Archilog_Geom
 
                 #region draw shape on sub panel
                 Image img = new Bitmap(subPanel.Width, subPanel.Height);
-                DrawShapeOnImage(img, shapes[i]);
+                shapes[i].Accept(new CsGraphicsDrawThumbnail(img, _toolBarPanel.Width, toolbarItemHeight));
                 subPanel.BackgroundImage = img;
                 subPanel.MouseDown += new MouseEventHandler(this.subPanel_MouseDown);
                 subPanel.MouseUp += new MouseEventHandler(this.subPanel_MouseUp);
@@ -65,7 +64,6 @@ namespace Archilog_Geom
         {
             InitializeToolBar();
         }
-
 
         public void OpenRightClickPopUp()
         {
@@ -100,109 +98,9 @@ namespace Archilog_Geom
             GroupEditor.Show();
         }
 
-
         private void RightClickMenuItem_Click(object sender, EventArgs eventArgs)
         {
             Mediator.Instance.HandleRightClickMenuItemClick(((MenuItem)sender).Index);
-        }
-
-        private void DrawShapeOnImage(Image img, IShape shape)
-        {
-            Graphics g = Graphics.FromImage(img);
-            g.SmoothingMode = SmoothingMode.AntiAlias;
-            SolidBrush b;
-
-            if (shape.GetType() == typeof(Rectangle))
-            {
-                Rectangle rect = (Rectangle)shape;
-                b = new SolidBrush(rect.Color);
-
-                System.Drawing.Rectangle drawing_rect = new System.Drawing.Rectangle(rect.X, rect.Y, rect.Width, rect.Height);
-                drawing_rect = ReplaceShape(drawing_rect);
-
-                g.FillRectangle(b, drawing_rect);
-            }
-            else if (shape.GetType() == typeof(Circle))
-            {
-                Circle circle = (Circle) shape;
-                b = new SolidBrush(circle.Color);
-
-                System.Drawing.Rectangle drawing_rect = new System.Drawing.Rectangle(circle.X, circle.Y, circle.Diameter, circle.Diameter);
-                drawing_rect = ReplaceShape(drawing_rect);
-
-                g.FillEllipse(b, drawing_rect.X, drawing_rect.Y, drawing_rect.Width, drawing_rect.Height);
-
-            }
-            else if (shape.GetType() == typeof(GroupShapes))
-            {
-                GroupShapes group = (GroupShapes)shape;
-                DrawGroupOnImage(group, g, group.X, group.XMax, group.Y, group.YMax);
-            }
-        }
-
-        private void DrawGroupOnImage(GroupShapes group, Graphics g, int xMin, int xMax, int yMin, int yMax)
-        {
-            g.SmoothingMode = SmoothingMode.AntiAlias;
-            SolidBrush b;
-            double ratioX = (double) _toolBarPanel.Width / (double) (xMax - xMin);
-            double ratioY = (double) toolbarItemHeight / (double) (yMax - yMin);
-            double ratio = Math.Min(ratioX, ratioY);
-            foreach (var shape in group.Children)
-            {
-                if (shape.GetType() == typeof(Rectangle))
-                {
-                    Rectangle rect = (Rectangle)shape;
-                    b = new SolidBrush(rect.Color);
-
-                    System.Drawing.Rectangle drawing_rect = new System.Drawing.Rectangle(rect.X, rect.Y, rect.Width, rect.Height);
-                    drawing_rect = ReplaceShapeInGroup(drawing_rect, ratio, xMin, yMin);
-                    g.FillRectangle(b, drawing_rect);
-                    
-                }
-                else if (shape.GetType() == typeof(Circle))
-                {
-                    Circle circle = (Circle)shape;
-                    b = new SolidBrush(circle.Color);
-
-                    System.Drawing.Rectangle drawing_rect = new System.Drawing.Rectangle(circle.X, circle.Y, circle.Diameter, circle.Diameter);
-                    drawing_rect = ReplaceShapeInGroup(drawing_rect, ratio, xMin, yMin);
-
-                    g.FillEllipse(b, drawing_rect.X, drawing_rect.Y, drawing_rect.Width, drawing_rect.Height);
-
-                }
-                else if (shape.GetType() == typeof(GroupShapes))
-                {
-                    DrawGroupOnImage((GroupShapes)shape, g, xMin, xMax, yMin, yMax);
-                }
-            }
-        }
-
-        private System.Drawing.Rectangle ReplaceShapeInGroup(System.Drawing.Rectangle drawingRect, double ratio, int xMin, int yMin)
-        {
-            double newX = (ratio * (drawingRect.X - xMin));
-            double newY = (ratio * (drawingRect.Y - yMin));
-            double newWidth = (ratio * drawingRect.Width);
-            double newHeight = (ratio * drawingRect.Height);
-
-            drawingRect.X = (int)newX;
-            drawingRect.Y = (int)newY;
-            drawingRect.Width = (int)newWidth;
-            drawingRect.Height = (int)newHeight;
-
-            return drawingRect;
-        }
-
-        private System.Drawing.Rectangle ReplaceShape(System.Drawing.Rectangle drawingRect)
-        {
-            while (drawingRect.Width >= _toolBarPanel.Width || drawingRect.Height >= toolbarItemHeight)
-            {
-                drawingRect.Width /= 2;
-                drawingRect.Height /= 2;
-            }
-
-            drawingRect.X = _toolBarPanel.Width / 2 - drawingRect.Width / 2;
-            drawingRect.Y = toolbarItemHeight / 2 - drawingRect.Height / 2;
-            return drawingRect;
         }
 
         private void subPanel_MouseDown(object sender, MouseEventArgs e)
@@ -325,12 +223,10 @@ namespace Archilog_Geom
                  Mediator.Instance.Import(fileDialog.FileName);
         }
 
-
         private void CsGraphics_FormClosing(object sender, FormClosingEventArgs e)
         {
             Mediator.Instance.SaveBeforeAppClosure();
         }
-
 
         private void clearAll_Click(object sender, EventArgs e)
         {

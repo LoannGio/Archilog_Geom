@@ -10,12 +10,7 @@ namespace Archilog_Geom
     {
         public PopUpRectangle(Rectangle r)
         {
-            myShape = r;
-        }
-
-        public override void Edit()
-        {
-            Mediator.Instance.RectangleEditMenu((Rectangle)myShape);
+            _myShape = r;
         }
     }
 }
