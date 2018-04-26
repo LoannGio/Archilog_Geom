@@ -2,11 +2,11 @@
 
 namespace Archilog_Geom.Controller
 {
-    public class ReplaceShapeOnDrawing : IShapeVisitor
+    public class CenterShapeOnDrawing : IShapeVisitor
     {
         private readonly int _mouseX;
         private readonly int _mouseY;
-        public ReplaceShapeOnDrawing(int mouseX, int mouseY)
+        public CenterShapeOnDrawing(int mouseX, int mouseY)
         {
             _mouseX = mouseX;
             _mouseY = mouseY;

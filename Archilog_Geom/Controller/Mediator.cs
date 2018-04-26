@@ -65,7 +65,7 @@ namespace Archilog_Geom.Controller
         {
             if (_currentShape != null)
             {
-                _currentShape.Accept(new ReplaceShapeOnDrawing(x, y));
+                _currentShape.Accept(new CenterShapeOnDrawing(x, y));
                 DrawnShapes.Add(_currentShape);
                 _g.RefreshView();
                 _currentShape = null;
