@@ -54,7 +54,7 @@
     <Compile Include="Controller\EditMenu.cs" />
     <Compile Include="Controller\FileManager.cs" />
     <Compile Include="Controller\IShapeVisitor.cs" />
-    <Compile Include="Controller\ReplaceShapeOnDrawing.cs" />
+    <Compile Include="Controller\CenterShapeOnDrawing.cs" />
     <Compile Include="Controller\ReplaceShape.cs" />
     <Compile Include="Controller\UpdateShape.cs" />
     <Compile Include="Model\IToolBar.cs" />

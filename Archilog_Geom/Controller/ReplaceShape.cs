@@ -27,8 +27,11 @@ namespace Archilog_Geom.Controller
 
         public void VisitGroup(GroupShapes group)
         {
-            group.X = _x;
-            group.Y = _y;
+            foreach (var shape in group.Children)
+            {
+                shape.Accept(new ReplaceShape(shape.X + (_x - group.X), shape.Y + (_y - group.Y)));
+            }
+            group.UpdateBounds();
         }
     }
 }
